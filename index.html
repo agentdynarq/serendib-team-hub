@@ -19,7 +19,7 @@
     --serif:'Cormorant Garamond', Georgia, serif;
     --sans:'Manrope', system-ui, -apple-system, sans-serif;
     --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
-    --sb:288px; --maxw:860px;
+    --sb:288px; --maxw:840px;
   }
   html[data-theme="dark"]{
     --ink:#ECEBF3; --ink-soft:#c4c6d6; --muted:#9297ad;
@@ -30,8 +30,6 @@
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 20px 50px rgba(0,0,0,.35);
   }
   *,*::before,*::after{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{
     margin:0; background:var(--paper); color:var(--ink);
     font-family:var(--sans); font-size:15px; line-height:1.65;
@@ -40,32 +38,26 @@
   a{color:var(--link); text-decoration:none}
   a:hover{text-decoration:underline; text-underline-offset:3px}
   ::selection{background:rgba(176,141,62,.22)}
-  .tab{font-variant-numeric:tabular-nums}
+  .mono{font-family:var(--mono)}
 
-  /* progress bar */
-  #progress{position:fixed; top:0; left:0; height:2px; width:0%;
-    background:linear-gradient(90deg,var(--gold),var(--gold-soft)); z-index:120}
-
-  /* layout */
   .wrap{display:grid; grid-template-columns:var(--sb) 1fr; min-height:100vh}
   aside{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
     border-right:1px solid var(--line); background:var(--surface);
     padding:26px 20px 30px; display:flex; flex-direction:column; gap:18px}
   aside::-webkit-scrollbar{width:6px} aside::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px}
 
-  .brand{display:flex; align-items:center; gap:11px; padding-bottom:6px}
-  .brand .mark{flex:0 0 auto}
+  .brand{display:flex; align-items:center; gap:11px; padding-bottom:2px}
   .brand .name{font-family:var(--serif); font-weight:600; font-size:21px; letter-spacing:.01em; line-height:1.05}
   .brand .sub{font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-top:2px}
 
-  nav{display:flex; flex-direction:column; gap:1px; margin-top:4px}
-  nav a{display:flex; align-items:baseline; gap:10px; padding:8px 10px; border-radius:8px;
+  .nlabel{font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); font-weight:700; padding:0 10px; margin-top:2px}
+  nav{display:flex; flex-direction:column; gap:1px}
+  nav a{display:flex; align-items:baseline; gap:10px; padding:9px 10px; border-radius:8px; cursor:pointer;
     color:var(--ink-soft); font-size:13.5px; font-weight:500; line-height:1.3; transition:background .18s, color .18s}
   nav a .idx{font-family:var(--mono); font-size:10.5px; color:var(--muted); width:20px; flex:0 0 auto}
   nav a:hover{background:var(--surface-2); text-decoration:none; color:var(--ink)}
-  nav a.active{background:linear-gradient(90deg,rgba(176,141,62,.14),transparent); color:var(--ink); font-weight:600}
+  nav a.active{background:linear-gradient(90deg,rgba(176,141,62,.16),transparent); color:var(--ink); font-weight:600}
   nav a.active .idx{color:var(--gold)}
-  nav a.active::before{content:""; position:absolute}
 
   .aside-foot{margin-top:auto; display:flex; flex-direction:column; gap:12px; padding-top:16px; border-top:1px solid var(--line)}
   .chiprow{display:flex; gap:8px; flex-wrap:wrap}
@@ -76,31 +68,50 @@
     padding:7px 12px; border-radius:999px; transition:.18s}
   .toggle:hover{color:var(--ink); border-color:var(--gold)}
 
-  main{min-width:0}
-  .inner{max-width:var(--maxw); margin:0 auto; padding:0 40px 120px}
+  main{min-width:0; display:flex; flex-direction:column}
 
-  /* hero */
-  header.hero{padding:78px 0 40px; border-bottom:1px solid var(--line)}
+  /* sticky tab bar */
+  .tabbar{position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:14px 40px; background:color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .tb-title{display:flex; align-items:baseline; gap:12px; min-width:0}
+  .tb-num{font-family:var(--mono); font-size:12px; color:var(--gold)}
+  .tb-title h2{font-family:var(--serif); font-weight:600; font-size:1.5rem; margin:0; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .tb-nav{display:flex; gap:8px; flex:0 0 auto}
+  .tb-btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-size:12.5px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); padding:8px 12px; border-radius:999px; cursor:pointer; transition:.16s}
+  .tb-btn:hover{border-color:var(--gold); color:var(--ink)}
+  .tb-btn[disabled]{opacity:.35; pointer-events:none}
+  .tb-btn svg{stroke:currentColor}
+
+  .inner{max-width:var(--maxw); width:100%; margin:0 auto; padding:38px 40px 110px}
+
+  section{display:none}
+  section.active{display:block; animation:panelIn .34s ease}
+  @keyframes panelIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){section.active{animation:none}}
+
+  /* key points box */
+  .keybox{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gold);
+    border-radius:14px; padding:18px 22px; margin:0 0 30px; box-shadow:var(--shadow)}
+  .keybox .kh{display:flex; align-items:center; gap:9px; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--gold); font-weight:700; margin-bottom:12px}
+  .keybox ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px}
+  .keybox li{position:relative; padding-left:26px; font-size:14px; color:var(--ink-soft)}
+  .keybox li::before{content:""; position:absolute; left:4px; top:8px; width:7px; height:7px; background:var(--gold); transform:rotate(45deg)}
+  .keybox li b{color:var(--ink); font-weight:600}
+
+  /* hero (overview only) */
+  .hero{padding:6px 0 30px; margin-bottom:8px; border-bottom:1px solid var(--line-soft)}
   .eyebrow{font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:700}
-  .hero h1{font-family:var(--serif); font-weight:600; letter-spacing:-.01em; line-height:.98;
-    font-size:clamp(3rem,7vw,5.4rem); margin:18px 0 0}
-  .hero .lede{font-size:18px; color:var(--ink-soft); max-width:620px; margin:20px 0 0; font-weight:400}
-  .facet{margin:34px 0 4px}
-  .meta{display:flex; flex-wrap:wrap; gap:26px; margin-top:30px; padding-top:26px; border-top:1px solid var(--line-soft)}
-  .meta .m{min-width:96px}
+  .hero h1{font-family:var(--serif); font-weight:600; letter-spacing:-.01em; line-height:.98; font-size:clamp(2.6rem,6vw,4.4rem); margin:16px 0 0}
+  .hero .lede{font-size:17px; color:var(--ink-soft); max-width:620px; margin:18px 0 0}
+  .meta{display:flex; flex-wrap:wrap; gap:26px; margin-top:26px; padding-top:22px; border-top:1px solid var(--line-soft)}
   .meta .k{font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
-  .meta .v{font-family:var(--serif); font-size:26px; font-weight:600; margin-top:3px; line-height:1}
+  .meta .v{font-family:var(--serif); font-size:25px; font-weight:600; margin-top:3px; line-height:1}
   .meta .v small{font-family:var(--sans); font-size:12px; color:var(--muted); font-weight:500; letter-spacing:0}
 
-  /* sections */
-  section{padding:56px 0; border-bottom:1px solid var(--line-soft); scroll-margin-top:20px}
-  .s-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:26px}
-  .s-num{font-family:var(--mono); font-size:12px; color:var(--gold); padding-top:12px; font-weight:500}
-  .s-head h2{font-family:var(--serif); font-weight:600; font-size:clamp(2rem,4vw,2.9rem); line-height:1.02; margin:0; letter-spacing:-.01em}
-  .s-head .tag{display:block; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:6px}
-  .rule{height:1px; background:linear-gradient(90deg,var(--gold),transparent); border:0; margin:0 0 26px; max-width:120px}
-
-  h3{font-family:var(--serif); font-weight:600; font-size:1.5rem; margin:34px 0 10px; letter-spacing:-.005em}
+  h3{font-family:var(--serif); font-weight:600; font-size:1.5rem; margin:32px 0 10px; letter-spacing:-.005em}
   h4{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:700; margin:26px 0 10px}
   p{margin:0 0 14px; color:var(--ink-soft)}
   strong{color:var(--ink); font-weight:600}
@@ -108,14 +119,11 @@
 
   ul.clean,ol.clean{margin:0 0 16px; padding-left:0; list-style:none}
   ul.clean li{position:relative; padding:4px 0 4px 22px; color:var(--ink-soft)}
-  ul.clean li::before{content:""; position:absolute; left:2px; top:13px; width:6px; height:6px;
-    background:var(--gold); transform:rotate(45deg)}
+  ul.clean li::before{content:""; position:absolute; left:2px; top:13px; width:6px; height:6px; background:var(--gold); transform:rotate(45deg)}
   ol.clean{counter-reset:c}
   ol.clean li{position:relative; padding:4px 0 4px 30px; color:var(--ink-soft); counter-increment:c}
-  ol.clean li::before{content:counter(c,decimal-leading-zero); position:absolute; left:0; top:5px;
-    font-family:var(--mono); font-size:11px; color:var(--gold)}
+  ol.clean li::before{content:counter(c,decimal-leading-zero); position:absolute; left:0; top:5px; font-family:var(--mono); font-size:11px; color:var(--gold)}
 
-  /* cards & grids */
   .grid{display:grid; gap:14px}
   .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)}
   .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow)}
@@ -123,14 +131,14 @@
   .card .lane{font-family:var(--mono); font-size:11px; color:var(--gold)}
   .card p{margin:0; font-size:13.5px}
 
-  /* callout */
   .callout{display:flex; gap:14px; background:var(--surface); border:1px solid var(--line);
-    border-left:3px solid var(--gold); border-radius:12px; padding:16px 18px; margin:20px 0; box-shadow:var(--shadow)}
-  .callout .ic{flex:0 0 auto; color:var(--gold); margin-top:2px}
+    border-left:3px solid var(--navy-2); border-radius:12px; padding:16px 18px; margin:20px 0; box-shadow:var(--shadow)}
+  .callout .ic{flex:0 0 auto; color:var(--navy-2); margin-top:2px}
   .callout p{margin:0; font-size:14px}
-  .callout strong{color:var(--ink)}
 
-  /* tables */
+  .rule{height:1px; background:linear-gradient(90deg,var(--gold),transparent); border:0; margin:0 0 24px; max-width:120px}
+  .intro{font-size:15px; color:var(--ink-soft); margin-bottom:6px}
+
   .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; margin:16px 0; box-shadow:var(--shadow)}
   table{border-collapse:collapse; width:100%; font-size:13px; min-width:520px}
   thead th{background:var(--surface-2); text-align:left; font-weight:700; color:var(--ink);
@@ -138,90 +146,76 @@
   tbody td{padding:10px 14px; border-bottom:1px solid var(--line-soft); color:var(--ink-soft); vertical-align:top}
   tbody tr:last-child td{border-bottom:0}
   tbody tr:hover td{background:var(--surface-2)}
-  td code,.mono{font-family:var(--mono); font-size:12px; color:var(--navy-2)}
-  html[data-theme="dark"] td code,html[data-theme="dark"] .mono{color:var(--gold-soft)}
+  td code{font-family:var(--mono); font-size:12px; color:var(--navy-2)}
+  html[data-theme="dark"] td code{color:var(--gold-soft)}
 
-  /* marks bars */
   .marks{display:flex; flex-direction:column; gap:9px; margin:18px 0}
-  .mark{display:grid; grid-template-columns:1fr 200px 34px; align-items:center; gap:14px}
+  .mark{display:grid; grid-template-columns:1fr 190px 34px; align-items:center; gap:14px}
   .mark .lbl{font-size:13px; color:var(--ink-soft)}
   .mark .bar{height:9px; background:var(--surface-2); border-radius:999px; overflow:hidden; border:1px solid var(--line-soft)}
   .mark .fill{height:100%; background:linear-gradient(90deg,var(--navy),var(--navy-2)); border-radius:999px}
   .mark .fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
   .mark .val{font-family:var(--mono); font-size:13px; text-align:right; color:var(--ink)}
-  @media(max-width:620px){.mark{grid-template-columns:1fr 90px 30px}}
+  @media(max-width:620px){.mark{grid-template-columns:1fr 80px 28px}}
 
-  /* FR list */
   .reqs{display:flex; flex-direction:column; gap:2px; margin:12px 0}
   .req{display:grid; grid-template-columns:64px 1fr; gap:14px; padding:9px 0; border-bottom:1px solid var(--line-soft)}
   .req .id{font-family:var(--mono); font-size:11.5px; color:var(--gold); padding-top:2px}
   .req .txt{font-size:13.5px; color:var(--ink-soft)}
 
-  /* lifecycle stepper */
-  .flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:0; margin:22px 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
-  .flow .node{flex:1 1 150px; min-width:150px; padding:16px 16px; background:var(--surface); border-right:1px solid var(--line-soft); position:relative}
+  .flow{display:flex; flex-wrap:wrap; margin:22px 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
+  .flow .node{flex:1 1 150px; min-width:150px; padding:16px; background:var(--surface); border-right:1px solid var(--line-soft)}
   .flow .node:last-child{border-right:0}
   .flow .st{font-family:var(--mono); font-size:12px; color:var(--ink); font-weight:500}
-  .flow .by{font-size:11px; color:var(--muted); margin-top:6px; letter-spacing:.02em}
+  .flow .by{font-size:11px; color:var(--muted); margin-top:6px}
   .flow .by b{color:var(--gold); font-weight:600}
   .flow .node .dot{width:8px; height:8px; background:var(--gold); border-radius:50%; margin-bottom:10px}
 
-  /* module chain */
   .chain{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0}
   .chain .box{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:9px 13px; font-size:12.5px; font-weight:600; color:var(--ink); box-shadow:var(--shadow)}
   .chain .box small{display:block; font-weight:500; color:var(--muted); font-size:10.5px}
   .chain .arr{color:var(--gold); flex:0 0 auto}
 
-  /* timeline */
-  .tl{position:relative; margin:20px 0 4px; padding-left:26px}
-  .tl::before{content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line)}
-  .tl .day{position:relative; padding:0 0 26px 20px}
-  .tl .day::before{content:""; position:absolute; left:-24px; top:3px; width:12px; height:12px; border-radius:50%;
-    background:var(--paper); border:2px solid var(--gold)}
+  .tl{position:relative; margin:20px 0 4px; padding-left:8px}
+  .tl::before{content:""; position:absolute; left:6px; top:6px; bottom:16px; width:2px; background:var(--line)}
+  .tl .day{position:relative; padding:0 0 24px 26px}
+  .tl .day::before{content:""; position:absolute; left:1px; top:3px; width:12px; height:12px; border-radius:50%; background:var(--paper); border:2px solid var(--gold)}
   .tl .day .d{font-family:var(--serif); font-size:1.25rem; font-weight:600; color:var(--ink)}
-  .tl .day .goal{font-size:12px; color:var(--gold); font-weight:600; margin:2px 0 8px; letter-spacing:.02em}
+  .tl .day .goal{font-size:12px; color:var(--gold); font-weight:600; margin:2px 0 8px}
 
-  /* glossary */
   .term{padding:14px 0; border-bottom:1px solid var(--line-soft)}
   .term .t{font-family:var(--serif); font-size:1.2rem; font-weight:600; color:var(--ink)}
   .term .d{font-size:13.5px; color:var(--ink-soft); margin-top:3px}
   .term .avoid{font-size:12px; color:var(--muted); margin-top:5px}
   .term .avoid b{color:var(--danger); font-weight:600; letter-spacing:.04em; text-transform:uppercase; font-size:10px}
 
-  /* code card */
   .code{background:#12162e; border-radius:12px; margin:16px 0; overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line)}
   html[data-theme="dark"] .code{background:#0a0c1a}
   .code .bar{display:flex; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid rgba(255,255,255,.08)}
   .code .bar .lg{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#9aa0c0}
   .code pre{margin:0; padding:16px 18px; overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.7; color:#d7dbf0}
   .code pre .c{color:#7b83a8}
-  .pill{display:inline-block; font-family:var(--mono); font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--ink-soft); background:var(--surface-2)}
 
-  /* mobile top bar */
-  .topbar{display:none; position:sticky; top:0; z-index:100; background:var(--surface); border-bottom:1px solid var(--line);
+  .topbar{display:none; position:sticky; top:0; z-index:60; background:var(--surface); border-bottom:1px solid var(--line);
     padding:12px 18px; align-items:center; justify-content:space-between}
   .topbar .name{font-family:var(--serif); font-weight:600; font-size:18px}
   .iconbtn{display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px;
     border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer}
   .scrim{display:none; position:fixed; inset:0; background:rgba(10,12,26,.5); z-index:98}
 
-  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
-  .reveal.in{opacity:1; transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none}}
-
   @media(max-width:960px){
     .wrap{grid-template-columns:1fr}
     aside{position:fixed; z-index:99; width:300px; left:0; top:0; transform:translateX(-102%); transition:transform .28s ease; box-shadow:var(--shadow)}
     aside.open{transform:none}
     .topbar{display:flex}
-    .inner{padding:0 22px 90px}
-    header.hero{padding:40px 0 30px}
+    .tabbar{top:65px; padding:12px 20px}
+    .tb-btn span{display:none}
+    .inner{padding:26px 20px 90px}
     .grid.g2,.grid.g3{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
-<div id="progress"></div>
 
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:10px">
@@ -239,7 +233,7 @@
 <div class="wrap">
   <aside id="sidebar">
     <div class="brand">
-      <span class="mark" aria-hidden="true">
+      <span aria-hidden="true">
         <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
           <path d="M20 3 33 13 20 37 7 13Z" fill="none" stroke="var(--gold)" stroke-width="1.4"/>
           <path d="M7 13h26M20 3v34M13.5 13 20 37 26.5 13M20 3l-6.5 10M20 3l6.5 10" stroke="var(--navy-2)" stroke-width="1" opacity="0.75"/>
@@ -251,65 +245,68 @@
       </span>
     </div>
 
+    <div class="nlabel">Sections</div>
     <nav id="nav">
-      <a href="#overview"><span class="idx">00</span><span>Overview &amp; Marks</span></a>
-      <a href="#glossary"><span class="idx">01</span><span>Glossary</span></a>
-      <a href="#srs"><span class="idx">02</span><span>Requirements (SRS)</span></a>
-      <a href="#plan"><span class="idx">03</span><span>Implementation Plan</span></a>
-      <a href="#database"><span class="idx">04</span><span>Database Design</span></a>
-      <a href="#bpa"><span class="idx">05</span><span>Process Analysis</span></a>
-      <a href="#git"><span class="idx">06</span><span>Git Workflow</span></a>
-      <a href="#adr"><span class="idx">07</span><span>Stack Decision</span></a>
-      <a href="#integration"><span class="idx">08</span><span>How It Connects</span></a>
+      <a data-tab="overview"><span class="idx">00</span><span>Overview &amp; Marks</span></a>
+      <a data-tab="glossary"><span class="idx">01</span><span>Glossary</span></a>
+      <a data-tab="srs"><span class="idx">02</span><span>Requirements (SRS)</span></a>
+      <a data-tab="plan"><span class="idx">03</span><span>Implementation Plan</span></a>
+      <a data-tab="database"><span class="idx">04</span><span>Database Design</span></a>
+      <a data-tab="bpa"><span class="idx">05</span><span>Process Analysis</span></a>
+      <a data-tab="git"><span class="idx">06</span><span>Git Workflow</span></a>
+      <a data-tab="adr"><span class="idx">07</span><span>Stack Decision</span></a>
+      <a data-tab="integration"><span class="idx">08</span><span>How It Connects</span></a>
     </nav>
 
     <div class="aside-foot">
       <div class="chiprow">
-        <span class="chip">7 members</span>
-        <span class="chip">20 marks</span>
-        <span class="chip">Azure</span>
+        <span class="chip">7 members</span><span class="chip">20 marks</span><span class="chip">Azure</span>
       </div>
       <button class="toggle" id="themeBtn">
-        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 4 4M20 20l-1-1M5 19l-1 1M20 4l-1 1"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 4 4M20 20l-1-1M5 19l-1 1M20 4l-1 1"/></svg>
         <span id="themeLbl">Dark mode</span>
       </button>
-      <div style="font-size:11px;color:var(--muted);line-height:1.5">Single source of truth. Read before you build.</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.5">Single source of truth. Read your tab before you build.</div>
     </div>
   </aside>
 
   <main>
-  <div class="inner">
-
-    <header class="hero" id="top">
-      <div class="eyebrow">Team Sync Point</div>
-      <h1>Serendib&nbsp;Gems<br>ERP&nbsp;System</h1>
-      <p class="lede">One connected system that runs a Sri Lankan gem house, from buying rough stones to cutting, stock, sales and money. This page holds the full plan, the requirements, and the database in one place, so all seven of us build the same thing.</p>
-
-      <div class="facet" aria-hidden="true">
-        <svg width="100%" height="64" viewBox="0 0 800 64" preserveAspectRatio="none">
-          <line x1="0" y1="32" x2="800" y2="32" stroke="var(--line)" stroke-width="1"/>
-          <path d="M370 12 L400 6 L430 12 L415 32 L400 58 L385 32 Z" fill="none" stroke="var(--gold)" stroke-width="1.3"/>
-          <path d="M370 12 L430 12 M400 6 L400 58 M385 32 L415 32 M385 32 L400 6 L415 32" stroke="var(--navy-2)" stroke-width=".8" opacity=".7"/>
-        </svg>
+    <div class="tabbar">
+      <div class="tb-title"><span class="tb-num" id="tbNum">00</span><h2 id="tbTitle">Overview &amp; Marks</h2></div>
+      <div class="tb-nav">
+        <button class="tb-btn" id="prevBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg><span>Prev</span></button>
+        <button class="tb-btn" id="nextBtn"><span>Next</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
+    </div>
 
-      <div class="meta">
-        <div class="m"><div class="k">Deliver by</div><div class="v">13 Jul <small>presentation</small></div></div>
-        <div class="m"><div class="k">Team</div><div class="v">7 <small>one lane each</small></div></div>
-        <div class="m"><div class="k">Modules</div><div class="v">6 <small>+ login &amp; dashboard</small></div></div>
-        <div class="m"><div class="k">Total</div><div class="v">20 <small>marks</small></div></div>
-      </div>
-    </header>
+    <div class="inner">
 
     <!-- 00 OVERVIEW -->
-    <section id="overview" class="reveal">
-      <div class="s-head"><span class="s-num">00</span><div><span class="tag">Start here</span><h2>Overview &amp; where the marks are</h2></div></div>
-      <hr class="rule">
-      <p class="lead">Serendib Gems is a gem business. This ERP is the internal system its staff use to run daily work. It has six modules that share the same data, plus a login and a dashboard. A separate public storefront is the customer channel that sends orders into the ERP.</p>
-      <p>The assignment asks each group to pick one industry, design at least four connected ERP modules, build a working prototype, deploy it to Microsoft Azure, and keep one GitHub repo with commits from every member. We chose a gem house because the modules share one clear thread: the life of a single stone.</p>
+    <section id="overview">
+      <div class="hero">
+        <div class="eyebrow">Team Sync Point</div>
+        <h1>Serendib Gems ERP</h1>
+        <p class="lede">One connected system that runs a Sri Lankan gem house, from buying rough stones to cutting, stock, sales and money. This hub holds the full plan so all seven of us build the same thing.</p>
+        <div class="meta">
+          <div><div class="k">Deliver by</div><div class="v">13 Jul <small>presentation</small></div></div>
+          <div><div class="k">Team</div><div class="v">7 <small>one lane each</small></div></div>
+          <div><div class="k">Modules</div><div class="v">6 <small>+ login &amp; dashboard</small></div></div>
+          <div><div class="k">Total</div><div class="v">20 <small>marks</small></div></div>
+        </div>
+      </div>
+
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 7v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7Z"/></svg> What you must know</div>
+        <ul>
+          <li>We build a <b>gem house ERP</b>: six modules that <b>share one database</b>, deployed to <b>Azure</b>.</li>
+          <li><b>8 of the 20 marks</b> come from the modules working AND being connected. Another <b>6</b> come from a clean UI and a real Azure deploy. We build those first.</li>
+          <li>The stack is <b>React + Node/Express + Azure SQL</b>, all served as one app.</li>
+        </ul>
+      </div>
+
+      <p class="intro">Serendib Gems is a gem business. This ERP is the internal system its staff use to run daily work. A separate public storefront is the customer channel that sends orders into the ERP.</p>
 
       <h4>Mark allocation (out of 20)</h4>
-      <p style="font-size:13px">The plan is built to protect the biggest blocks first: the modules working and the modules being connected (8 marks), then a clean UI and a real Azure deploy (6 marks).</p>
       <div class="marks">
         <div class="mark"><span class="lbl">ERP module selection &amp; process integration</span><span class="bar"><span class="fill gold" style="width:100%"></span></span><span class="val">4</span></div>
         <div class="mark"><span class="lbl">Functional implementation of modules</span><span class="bar"><span class="fill gold" style="width:100%"></span></span><span class="val">4</span></div>
@@ -332,17 +329,23 @@
       </div>
 
       <h4>Tech stack</h4>
-      <div class="chiprow" style="gap:8px;margin-top:4px">
+      <div class="chiprow" style="margin-top:4px">
         <span class="chip">React (Vite)</span><span class="chip">Node · Express</span><span class="chip">Azure SQL</span>
         <span class="chip">Azure App Service</span><span class="chip">One deployable app</span>
       </div>
     </section>
 
     <!-- 01 GLOSSARY -->
-    <section id="glossary" class="reveal">
-      <div class="s-head"><span class="s-num">01</span><div><span class="tag">Shared language</span><h2>Glossary</h2></div></div>
-      <hr class="rule">
-      <p>These are the words we agree to use, so all seven of us mean the same thing. This is a glossary only, not a place for design or code decisions.</p>
+    <section id="glossary">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg> What you must know</div>
+        <ul>
+          <li>One physical stone is always called a <b>Lot</b>. Not item, not product.</li>
+          <li><b>Lot status</b> is the shared field that proves the modules are integrated.</li>
+          <li>A <b>User</b> (a login account) is not the same as an <b>Employee</b> (a staff record).</li>
+        </ul>
+      </div>
+      <p class="intro">These are the words we agree to use, so all seven of us mean the same thing. This is a glossary only, not a place for design or code decisions.</p>
 
       <div class="term"><div class="t">Lot</div><div class="d">The single unit of inventory, which is one physical gemstone. Tracked from purchase to sale. Every Lot has a status that other modules change.</div><div class="avoid"><b>Avoid</b> · item, product, stone (in code), SKU</div></div>
       <div class="term"><div class="t">Rough</div><div class="d">A Lot that has been bought but not cut yet. It enters inventory through a Purchase.</div><div class="avoid"><b>Avoid</b> · raw, uncut stone</div></div>
@@ -350,7 +353,7 @@
       <div class="term"><div class="t">Lot Status</div><div class="d">The shared field that proves integration. It moves through: In Stock (rough), In Cutting, In Stock (finished), Reserved, Sold. Procurement, Cutting and Sales all write to it.</div><div class="avoid"><b>Avoid</b> · state, stage, condition</div></div>
       <div class="term"><div class="t">Certification</div><div class="d">The independent lab grading of a Lot: a lab name plus a certificate number, for example GIA, GRS, SSEF. Recorded against the Lot.</div><div class="avoid"><b>Avoid</b> · cert (in prose), grading paper, report</div></div>
       <div class="term"><div class="t">Supplier</div><div class="d">A party the gem house buys Rough from, such as a miner, a dealer, or an estate.</div><div class="avoid"><b>Avoid</b> · vendor, miner (as the main word), seller</div></div>
-      <div class="term"><div class="t">Purchase</div><div class="d">A buying transaction with a Supplier. Receiving it creates or updates Rough Lots in Inventory and raises the amount owed to the Supplier.</div><div class="avoid"><b>Avoid</b> · procurement order (that is the module name), buy, PO</div></div>
+      <div class="term"><div class="t">Purchase</div><div class="d">A buying transaction with a Supplier. Receiving it creates or updates Rough Lots in Inventory and raises the amount owed to the Supplier.</div><div class="avoid"><b>Avoid</b> · procurement order (module name), buy, PO</div></div>
       <div class="term"><div class="t">Cutting Job</div><div class="d">The workshop task that turns one Rough Lot into a Finished Lot. Assigned to a Cutter.</div><div class="avoid"><b>Avoid</b> · job (alone), work order, production run</div></div>
       <div class="term"><div class="t">Cutter</div><div class="d">A staff member in HR who does Cutting Jobs. A Cutter is a kind of Employee.</div><div class="avoid"><b>Avoid</b> · worker, craftsman, lapidary</div></div>
       <div class="term"><div class="t">Customer Order</div><div class="d">A request from a Customer to buy one or more Finished Lots. Placing it Reserves the Lots. Confirming it marks them Sold. Can come from the storefront or a walk-in.</div><div class="avoid"><b>Avoid</b> · order (alone), sale, transaction, cart</div></div>
@@ -362,8 +365,15 @@
     </section>
 
     <!-- 02 SRS -->
-    <section id="srs" class="reveal">
-      <div class="s-head"><span class="s-num">02</span><div><span class="tag">What we must build</span><h2>Software Requirements (SRS)</h2></div></div>
+    <section id="srs">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> What you must know</div>
+        <ul>
+          <li>Six modules, each doing <b>add, view, edit</b>. Plus a <b>login with roles</b> and a <b>live dashboard</b>.</li>
+          <li>The one flow that must work end to end: <b>buy → cut → sell → invoice</b>, all changing one Lot's status.</li>
+          <li>Security basics: <b>passwords hashed</b>, and only logged-in users can reach the API.</li>
+        </ul>
+      </div>
       <hr class="rule">
 
       <h3>1. Purpose &amp; scope</h3>
@@ -461,20 +471,18 @@
       </div>
 
       <h3>5. Non functional requirements</h3>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>ID</th><th>Area</th><th>Requirement</th></tr></thead>
-          <tbody>
-            <tr><td><code>NFR-1</code></td><td>Performance</td><td>A normal page loads in about 3 seconds or less.</td></tr>
-            <tr><td><code>NFR-2</code></td><td>Usability</td><td>A new user can find a module without training.</td></tr>
-            <tr><td><code>NFR-3</code></td><td>Security</td><td>Passwords stored hashed, never plain text. Only logged-in users reach the API.</td></tr>
-            <tr><td><code>NFR-4</code></td><td>Reliability</td><td>The deployed system stays reachable during the presentation.</td></tr>
-            <tr><td><code>NFR-5</code></td><td>Portability</td><td>Runs in any modern browser on desktop and mobile.</td></tr>
-            <tr><td><code>NFR-6</code></td><td>Maintainability</td><td>Each module keeps its code in its own area.</td></tr>
-            <tr><td><code>NFR-7</code></td><td>Data integrity</td><td>Keys and relationships stop records pointing to missing data.</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Area</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td><code>NFR-1</code></td><td>Performance</td><td>A normal page loads in about 3 seconds or less.</td></tr>
+          <tr><td><code>NFR-2</code></td><td>Usability</td><td>A new user can find a module without training.</td></tr>
+          <tr><td><code>NFR-3</code></td><td>Security</td><td>Passwords stored hashed, never plain text. Only logged-in users reach the API.</td></tr>
+          <tr><td><code>NFR-4</code></td><td>Reliability</td><td>The deployed system stays reachable during the presentation.</td></tr>
+          <tr><td><code>NFR-5</code></td><td>Portability</td><td>Runs in any modern browser on desktop and mobile.</td></tr>
+          <tr><td><code>NFR-6</code></td><td>Maintainability</td><td>Each module keeps its code in its own area.</td></tr>
+          <tr><td><code>NFR-7</code></td><td>Data integrity</td><td>Keys and relationships stop records pointing to missing data.</td></tr>
+        </tbody>
+      </table></div>
 
       <h3>6. Out of scope (prototype)</h3>
       <ul class="clean">
@@ -487,15 +495,22 @@
     </section>
 
     <!-- 03 PLAN -->
-    <section id="plan" class="reveal">
-      <div class="s-head"><span class="s-num">03</span><div><span class="tag">Who, what, when</span><h2>Implementation Plan</h2></div></div>
+    <section id="plan">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M8 15l3-4 3 2 4-6"/></svg> What you must know</div>
+        <ul>
+          <li>Each of the seven owns <b>one lane</b> and must <b>commit under their own name</b>.</li>
+          <li>We deploy to Azure on <b>Day 1</b>, not the last night, so deployment is never a surprise.</li>
+          <li><b>Inventory is built first</b> as the template that every other module copies.</li>
+        </ul>
+      </div>
       <hr class="rule">
       <p class="lead">The goal: a working prototype ERP with six connected modules, a login and a dashboard, deployed to Azure, in one GitHub repo with commits from all seven members.</p>
 
       <h3>The seven lanes</h3>
-      <p style="font-size:13px">Each person owns one lane: they write the code, commit under their own name, and can explain it in the viva. The AI helps write code, but the owner reviews, tests, commits and learns it. Fill your name in the repo copy of this table.</p>
+      <p style="font-size:13px">The AI helps write code, but the owner reviews, tests, commits and learns it. Fill your name into the repo copy of this table.</p>
       <div class="grid g2">
-        <div class="card"><span class="lane">Lane 1</span><h5>Inventory</h5><p>Lot list, add or edit a lot, filters, photos, status badges. This is the template all other modules copy.</p></div>
+        <div class="card"><span class="lane">Lane 1</span><h5>Inventory</h5><p>Lot list, add or edit a lot, filters, photos, status badges. The template all other modules copy.</p></div>
         <div class="card"><span class="lane">Lane 2</span><h5>Procurement</h5><p>Suppliers, purchases, and the action that adds bought stones into Inventory as rough lots.</p></div>
         <div class="card"><span class="lane">Lane 3</span><h5>Cutting &amp; Workshop</h5><p>Cutting jobs, assign a cutter, and the status change from rough to finished.</p></div>
         <div class="card"><span class="lane">Lane 4</span><h5>Sales</h5><p>Customers, customer orders, reserve and sell lots, and accept orders from the storefront.</p></div>
@@ -530,16 +545,16 @@
       <div class="table-wrap"><table>
         <thead><tr><th>Checkpoint</th><th>Done means</th></tr></thead>
         <tbody>
-          <tr><td><code>M1</code> end of Day 1</td><td>Login works, Inventory works, app is live on Azure.</td></tr>
-          <tr><td><code>M2</code> end of Day 2</td><td>Four modules work and a stone can flow rough to sold.</td></tr>
-          <tr><td><code>M3</code> end of Day 3</td><td>All six modules plus dashboard plus storefront link work.</td></tr>
-          <tr><td><code>M4</code> end of Day 4</td><td>Final deploy, report and slides done, everyone committed, rehearsed.</td></tr>
+          <tr><td><code>M1</code> Day 1</td><td>Login works, Inventory works, app is live on Azure.</td></tr>
+          <tr><td><code>M2</code> Day 2</td><td>Four modules work and a stone can flow rough to sold.</td></tr>
+          <tr><td><code>M3</code> Day 3</td><td>All six modules plus dashboard plus storefront link work.</td></tr>
+          <tr><td><code>M4</code> Day 4</td><td>Final deploy, report and slides done, everyone committed, rehearsed.</td></tr>
         </tbody>
       </table></div>
 
       <h3>Risks &amp; handling</h3>
       <ul class="clean">
-        <li><strong>Azure deploy fails on the last day</strong> — deploy on Day 1 and keep deploying, so it is never a surprise.</li>
+        <li><strong>Azure deploy fails on the last day</strong> — deploy on Day 1 and keep deploying.</li>
         <li><strong>Two people edit the same file</strong> — one folder per module, small frequent commits.</li>
         <li><strong>A member goes quiet</strong> — modules follow the same pattern so anyone can pick one up.</li>
         <li><strong>Running out of time</strong> — HR is the lightest module and can be trimmed. The four minimum modules come first.</li>
@@ -549,17 +564,24 @@
       <ul class="clean">
         <li>You can add, view, and edit its records.</li>
         <li>Its data is saved in Azure SQL, not just in the browser.</li>
-        <li>Its part of the integration chain works (the correct Lot status change happens).</li>
+        <li>Its part of the integration chain works.</li>
         <li>Its pages use the shared gem design and appear in the menu.</li>
         <li>The owner has committed it and can explain it.</li>
       </ul>
     </section>
 
     <!-- 04 DATABASE -->
-    <section id="database" class="reveal">
-      <div class="s-head"><span class="s-num">04</span><div><span class="tag">Azure SQL</span><h2>Database Design</h2></div></div>
+    <section id="database">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg> What you must know</div>
+        <ul>
+          <li>There is <b>one central table: Lots</b>. Everything else links to it.</li>
+          <li>The <b>Lots.status</b> column moves: rough → cutting → finished → reserved → sold.</li>
+          <li>Use <b>foreign keys</b> so data cannot break, and <b>DECIMAL</b> for money.</li>
+        </ul>
+      </div>
       <hr class="rule">
-      <p class="lead">There is one central table, <span class="mono">Lots</span>. One row is one gemstone. Almost every other table points to a Lot, a customer, a supplier, or an order. The <span class="mono">Lots.status</span> column is the shared field that Procurement, Cutting and Sales all change. That single column is the heart of the integration story.</p>
+      <p class="lead">One row in <span class="mono">Lots</span> is one gemstone. Almost every other table points to a Lot, a customer, a supplier, or an order. The <span class="mono">Lots.status</span> column is the shared field that Procurement, Cutting and Sales all change.</p>
 
       <h3>Tables</h3>
 
@@ -703,15 +725,21 @@ Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
         <div class="node"><div class="dot"></div><div class="st">Reserved</div><div class="by">set by <b>Sales</b> on order</div></div>
         <div class="node"><div class="dot"></div><div class="st">Sold</div><div class="by">set by <b>Sales</b> on confirm</div></div>
       </div>
-      <p style="font-size:13px">Three modules write to this one column. That is the integration, shown on one screen.</p>
 
       <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7v6c0 5 3.5 8 9 9 5.5-1 9-4 9-9V7Z"/></svg></span>
         <p><strong>Developer notes.</strong> Use foreign keys so bad data cannot be saved. Money columns use DECIMAL, not FLOAT, so amounts stay exact. Keep the schema in <span class="mono">db/schema.sql</span> so anyone can rebuild the database. Seed reuses the twelve gems from the old storefront as starting Finished lots, plus a few suppliers, customers, employees and one Admin user.</p></div>
     </section>
 
     <!-- 05 BPA -->
-    <section id="bpa" class="reveal">
-      <div class="s-head"><span class="s-num">05</span><div><span class="tag">Why an ERP</span><h2>Business Process Analysis</h2></div></div>
+    <section id="bpa">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 5-6"/></svg> What you must know</div>
+        <ul>
+          <li>Today the gem house runs on <b>paper and disconnected files</b>: unclear stock, and a risk of selling a stone twice.</li>
+          <li>The ERP fix is <b>one shared record per stone</b> plus <b>live reports</b>.</li>
+          <li>This is a clear <b>digital transformation</b> story for the report and slides.</li>
+        </ul>
+      </div>
       <hr class="rule">
       <p>Serendib Gems is a gem house in Sri Lanka. Sri Lanka is famous for gemstones, especially sapphires from the Ratnapura area. A gem house buys rough stones, gets them cut and polished, keeps them in stock, and sells finished stones to customers, both local and foreign.</p>
 
@@ -769,10 +797,17 @@ Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
     </section>
 
     <!-- 06 GIT -->
-    <section id="git" class="reveal">
-      <div class="s-head"><span class="s-num">06</span><div><span class="tag">How we share code</span><h2>Git Workflow</h2></div></div>
+    <section id="git">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 8.5v7M18 10.5c0 4-6 2-6 5.5"/></svg> What you must know</div>
+        <ul>
+          <li><b>main always works.</b> Do your work on your own branch, merge through a Pull Request.</li>
+          <li>Everyone <b>commits under their own name</b>, in many small commits. This is worth marks.</li>
+          <li>Never commit <b>.env</b> or <b>node_modules</b>.</li>
+        </ul>
+      </div>
       <hr class="rule">
-      <p>This is how the seven of us share one GitHub repository without breaking each other's work, and how everyone gets commits under their own name (worth marks). One teammate already created the GitHub workspace. Everyone else must be added with write access. The repo name is <span class="mono">serendib-erp</span>.</p>
+      <p>This is how the seven of us share one GitHub repository without breaking each other's work. One teammate already created the GitHub workspace. Everyone else must be added with write access. The repo name is <span class="mono">serendib-erp</span>.</p>
 
       <h3>First time setup</h3>
       <div class="code"><div class="bar"><span class="lg">once per person</span></div><pre>git clone &lt;the repo url&gt;
@@ -780,9 +815,6 @@ cd serendib-erp
 git config user.name "Your Name"
 git config user.email "your-github-email@example.com"</pre></div>
       <p style="font-size:13px">If your name and email are wrong, your commits will not count as your contribution.</p>
-
-      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 8.5v7M18 10.5c0 4-6 2-6 5.5"/></svg></span>
-        <p><strong>The golden rule.</strong> The <span class="mono">main</span> branch must always work. Never push broken or half finished code straight to main. Always work on your own branch and merge through a Pull Request.</p></div>
 
       <h3>The daily flow</h3>
       <div class="code"><div class="bar"><span class="lg">every task</span></div><pre><span class="c"># 1. get the latest</span>
@@ -816,8 +848,15 @@ git push -u origin inventory-lot-list</pre></div>
     </section>
 
     <!-- 07 ADR -->
-    <section id="adr" class="reveal">
-      <div class="s-head"><span class="s-num">07</span><div><span class="tag">Decision record</span><h2>Why this stack</h2></div></div>
+    <section id="adr">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 8l7-5 7 5M5 8v8l7 5 7-5V8"/></svg> What you must know</div>
+        <ul>
+          <li>We picked <b>React + Node + Azure SQL</b> over .NET to reuse the storefront and our JavaScript skills.</li>
+          <li>The API and the React app are <b>one app</b>, so there is <b>one Azure deploy</b> and fewer things to break.</li>
+          <li>Be ready to explain this choice in the viva.</li>
+        </ul>
+      </div>
       <hr class="rule">
       <p class="lead">React + Node/Express + Azure SQL, served as a single app.</p>
       <p>For an assignment focused on Microsoft Azure, the obvious path is ASP.NET Core with Entity Framework, the most Azure native option. We chose React + Node/Express with Azure SQL instead. The reason: the team already built a polished React gem storefront whose components and design language we reuse for the ERP screens, and the team writes JavaScript, not C#. In a four day sprint, reusing the existing React work and staying in one language is worth more than the small extra Azure fit that .NET would give.</p>
@@ -830,10 +869,17 @@ git push -u origin inventory-lot-list</pre></div>
     </section>
 
     <!-- 08 INTEGRATION -->
-    <section id="integration" class="reveal">
-      <div class="s-head"><span class="s-num">08</span><div><span class="tag">The 4-mark story</span><h2>How it all connects</h2></div></div>
+    <section id="integration">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> What you must know</div>
+        <ul>
+          <li>One Lot's <b>status</b> field is changed by <b>Procurement, Cutting AND Sales</b>. That shared field is the integration.</li>
+          <li>This is the <b>4-mark story</b> and your "Interaction Between Modules" slide.</li>
+          <li>In the viva, <b>show a stone's status changing live</b> across modules. That beats any slide.</li>
+        </ul>
+      </div>
       <hr class="rule">
-      <p class="lead">This is the most important thing to be able to explain. Every gemstone is one Lot. A Lot has one <span class="mono">status</span> field. Three different modules change that same field during the normal business flow, so the modules are truly integrated, not just placed side by side.</p>
+      <p class="lead">Every gemstone is one Lot. A Lot has one <span class="mono">status</span> field. Three different modules change that same field during the normal business flow, so the modules are truly integrated, not just placed side by side.</p>
 
       <div class="chain">
         <span class="box">Procurement<small>buys rough</small></span>
@@ -859,13 +905,10 @@ git push -u origin inventory-lot-list</pre></div>
 
       <p>So one purchase in Procurement changes what Inventory shows, what Cutting can work on, what Sales can sell, what Billing charges, and what the Dashboard reports. This single chain is what we demonstrate live and draw on the "Interaction Between ERP Modules" slide.</p>
 
-      <div class="callout" style="border-left-color:var(--navy-2)"><span class="ic" style="color:var(--navy-2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
-        <p><strong>In the viva</strong>, anyone should be able to point at the Inventory list, add a purchase in Procurement, and show the same stone's status changing. That live proof is worth more than any slide.</p></div>
-
-      <p style="margin-top:34px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line-soft);padding-top:20px">Serendib Gems ERP · Team sync point · Keep this page open while you build. Every detail here matches the docs in the repository.</p>
+      <p style="margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line-soft);padding-top:20px">Serendib Gems ERP · Team sync point · Keep this hub open while you build. Every detail here matches the docs in the repository.</p>
     </section>
 
-  </div>
+    </div>
   </main>
 </div>
 
@@ -874,53 +917,44 @@ git push -u origin inventory-lot-list</pre></div>
   var root=document.documentElement;
   var saved=localStorage.getItem('serendib-theme');
   if(saved) root.setAttribute('data-theme',saved);
-  function setLbl(){
-    var d=root.getAttribute('data-theme')==='dark';
-    var lbl=document.getElementById('themeLbl'); if(lbl) lbl.textContent=d?'Light mode':'Dark mode';
-  }
+  function setLbl(){ var d=root.getAttribute('data-theme')==='dark'; var l=document.getElementById('themeLbl'); if(l) l.textContent=d?'Light mode':'Dark mode'; }
   setLbl();
-  function toggle(){
-    var d=root.getAttribute('data-theme')==='dark';
-    root.setAttribute('data-theme', d?'light':'dark');
-    localStorage.setItem('serendib-theme', d?'light':'dark'); setLbl();
-  }
+  function toggle(){ var d=root.getAttribute('data-theme')==='dark'; root.setAttribute('data-theme',d?'light':'dark'); localStorage.setItem('serendib-theme',d?'light':'dark'); setLbl(); }
   var tb=document.getElementById('themeBtn'); if(tb) tb.addEventListener('click',toggle);
   var tbm=document.getElementById('themeBtnM'); if(tbm) tbm.addEventListener('click',toggle);
 
-  // mobile drawer
   var sb=document.getElementById('sidebar'), scrim=document.getElementById('scrim'), mb=document.getElementById('menuBtn');
-  function open(){ sb.classList.add('open'); scrim.style.display='block'; }
-  function close(){ sb.classList.remove('open'); scrim.style.display='none'; }
-  if(mb) mb.addEventListener('click',open);
-  if(scrim) scrim.addEventListener('click',close);
-  document.querySelectorAll('#nav a').forEach(function(a){ a.addEventListener('click',close); });
+  function openNav(){ sb.classList.add('open'); scrim.style.display='block'; }
+  function closeNav(){ sb.classList.remove('open'); scrim.style.display='none'; }
+  if(mb) mb.addEventListener('click',openNav);
+  if(scrim) scrim.addEventListener('click',closeNav);
 
-  // progress bar
-  var prog=document.getElementById('progress');
-  function onScroll(){
-    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
-    prog.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
-  }
-  document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
-
-  // scrollspy
   var links=[].slice.call(document.querySelectorAll('#nav a'));
-  var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
-  var obs=new IntersectionObserver(function(ents){
-    ents.forEach(function(e){
-      if(e.isIntersecting){
-        links.forEach(function(l){l.classList.remove('active');});
-        var a=map[e.target.id]; if(a) a.classList.add('active');
-      }
-    });
-  },{rootMargin:'-20% 0px -70% 0px',threshold:0});
-  document.querySelectorAll('section[id]').forEach(function(s){obs.observe(s);});
+  var order=links.map(function(a){return a.getAttribute('data-tab');});
+  var meta={};
+  links.forEach(function(a){ meta[a.getAttribute('data-tab')]={num:a.querySelector('.idx').textContent, title:a.querySelector('span:last-child').textContent}; });
 
-  // reveal
-  var rev=new IntersectionObserver(function(ents){
-    ents.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); rev.unobserve(e.target);} });
-  },{rootMargin:'0px 0px -8% 0px',threshold:0.04});
-  document.querySelectorAll('.reveal').forEach(function(el){rev.observe(el);});
+  var tbNum=document.getElementById('tbNum'), tbTitle=document.getElementById('tbTitle');
+  var prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn');
+
+  function show(id, push){
+    if(order.indexOf(id)<0) id=order[0];
+    document.querySelectorAll('section').forEach(function(s){ s.classList.toggle('active', s.id===id); });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-tab')===id); });
+    tbNum.textContent=meta[id].num; tbTitle.textContent=meta[id].title;
+    var i=order.indexOf(id);
+    prevBtn.disabled=(i<=0); nextBtn.disabled=(i>=order.length-1);
+    prevBtn.onclick=function(){ if(i>0) show(order[i-1],true); };
+    nextBtn.onclick=function(){ if(i<order.length-1) show(order[i+1],true); };
+    if(push) history.pushState({tab:id},'', '#'+id);
+    window.scrollTo({top:0, behavior:'auto'});
+    closeNav();
+  }
+
+  links.forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); show(a.getAttribute('data-tab'),true); }); });
+  window.addEventListener('popstate',function(){ show((location.hash||'').slice(1)||order[0], false); });
+
+  show((location.hash||'').slice(1)||order[0], false);
 })();
 </script>
 </body>

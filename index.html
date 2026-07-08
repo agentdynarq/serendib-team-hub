@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Serendib Gems ERP — Team Sync Point</title>
+<meta name="description" content="The single reference hub for the Serendib Gems ERP group project: plan, SRS, database, workflow and more." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#151833; --ink-soft:#3a3f5c; --muted:#6c7188;
+    --paper:#FBFAF6; --surface:#ffffff; --surface-2:#f4f2ea;
+    --navy:#1E2D6E; --navy-2:#2E3F8F; --gold:#B08D3E; --gold-soft:#c9a961;
+    --line:rgba(21,24,51,0.12); --line-soft:rgba(21,24,51,0.07);
+    --link:#2E3F8F; --ok:#3f7a52; --warn:#b0722e; --danger:#a23a3a;
+    --shadow:0 1px 2px rgba(21,24,51,.04), 0 12px 40px rgba(21,24,51,.06);
+    --serif:'Cormorant Garamond', Georgia, serif;
+    --sans:'Manrope', system-ui, -apple-system, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --sb:288px; --maxw:860px;
+  }
+  html[data-theme="dark"]{
+    --ink:#ECEBF3; --ink-soft:#c4c6d6; --muted:#9297ad;
+    --paper:#0E1022; --surface:#161A30; --surface-2:#1d2138;
+    --navy:#8ea0e8; --navy-2:#a7b6ef; --gold:#cba85a; --gold-soft:#d9bd7c;
+    --line:rgba(255,255,255,0.12); --line-soft:rgba(255,255,255,0.06);
+    --link:#a7b6ef; --ok:#7fc79a; --warn:#e0a862; --danger:#e08585;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 20px 50px rgba(0,0,0,.35);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{color:var(--link); text-decoration:none}
+  a:hover{text-decoration:underline; text-underline-offset:3px}
+  ::selection{background:rgba(176,141,62,.22)}
+  .tab{font-variant-numeric:tabular-nums}
+
+  /* progress bar */
+  #progress{position:fixed; top:0; left:0; height:2px; width:0%;
+    background:linear-gradient(90deg,var(--gold),var(--gold-soft)); z-index:120}
+
+  /* layout */
+  .wrap{display:grid; grid-template-columns:var(--sb) 1fr; min-height:100vh}
+  aside{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    border-right:1px solid var(--line); background:var(--surface);
+    padding:26px 20px 30px; display:flex; flex-direction:column; gap:18px}
+  aside::-webkit-scrollbar{width:6px} aside::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px}
+
+  .brand{display:flex; align-items:center; gap:11px; padding-bottom:6px}
+  .brand .mark{flex:0 0 auto}
+  .brand .name{font-family:var(--serif); font-weight:600; font-size:21px; letter-spacing:.01em; line-height:1.05}
+  .brand .sub{font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-top:2px}
+
+  nav{display:flex; flex-direction:column; gap:1px; margin-top:4px}
+  nav a{display:flex; align-items:baseline; gap:10px; padding:8px 10px; border-radius:8px;
+    color:var(--ink-soft); font-size:13.5px; font-weight:500; line-height:1.3; transition:background .18s, color .18s}
+  nav a .idx{font-family:var(--mono); font-size:10.5px; color:var(--muted); width:20px; flex:0 0 auto}
+  nav a:hover{background:var(--surface-2); text-decoration:none; color:var(--ink)}
+  nav a.active{background:linear-gradient(90deg,rgba(176,141,62,.14),transparent); color:var(--ink); font-weight:600}
+  nav a.active .idx{color:var(--gold)}
+  nav a.active::before{content:""; position:absolute}
+
+  .aside-foot{margin-top:auto; display:flex; flex-direction:column; gap:12px; padding-top:16px; border-top:1px solid var(--line)}
+  .chiprow{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; letter-spacing:.02em;
+    color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line-soft); padding:5px 9px; border-radius:999px}
+  .toggle{display:inline-flex; align-items:center; gap:8px; cursor:pointer; background:var(--surface-2);
+    border:1px solid var(--line); color:var(--ink-soft); font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:7px 12px; border-radius:999px; transition:.18s}
+  .toggle:hover{color:var(--ink); border-color:var(--gold)}
+
+  main{min-width:0}
+  .inner{max-width:var(--maxw); margin:0 auto; padding:0 40px 120px}
+
+  /* hero */
+  header.hero{padding:78px 0 40px; border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  .hero h1{font-family:var(--serif); font-weight:600; letter-spacing:-.01em; line-height:.98;
+    font-size:clamp(3rem,7vw,5.4rem); margin:18px 0 0}
+  .hero .lede{font-size:18px; color:var(--ink-soft); max-width:620px; margin:20px 0 0; font-weight:400}
+  .facet{margin:34px 0 4px}
+  .meta{display:flex; flex-wrap:wrap; gap:26px; margin-top:30px; padding-top:26px; border-top:1px solid var(--line-soft)}
+  .meta .m{min-width:96px}
+  .meta .k{font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .meta .v{font-family:var(--serif); font-size:26px; font-weight:600; margin-top:3px; line-height:1}
+  .meta .v small{font-family:var(--sans); font-size:12px; color:var(--muted); font-weight:500; letter-spacing:0}
+
+  /* sections */
+  section{padding:56px 0; border-bottom:1px solid var(--line-soft); scroll-margin-top:20px}
+  .s-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:26px}
+  .s-num{font-family:var(--mono); font-size:12px; color:var(--gold); padding-top:12px; font-weight:500}
+  .s-head h2{font-family:var(--serif); font-weight:600; font-size:clamp(2rem,4vw,2.9rem); line-height:1.02; margin:0; letter-spacing:-.01em}
+  .s-head .tag{display:block; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:6px}
+  .rule{height:1px; background:linear-gradient(90deg,var(--gold),transparent); border:0; margin:0 0 26px; max-width:120px}
+
+  h3{font-family:var(--serif); font-weight:600; font-size:1.5rem; margin:34px 0 10px; letter-spacing:-.005em}
+  h4{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:700; margin:26px 0 10px}
+  p{margin:0 0 14px; color:var(--ink-soft)}
+  strong{color:var(--ink); font-weight:600}
+  .lead{font-size:16.5px; color:var(--ink)}
+
+  ul.clean,ol.clean{margin:0 0 16px; padding-left:0; list-style:none}
+  ul.clean li{position:relative; padding:4px 0 4px 22px; color:var(--ink-soft)}
+  ul.clean li::before{content:""; position:absolute; left:2px; top:13px; width:6px; height:6px;
+    background:var(--gold); transform:rotate(45deg)}
+  ol.clean{counter-reset:c}
+  ol.clean li{position:relative; padding:4px 0 4px 30px; color:var(--ink-soft); counter-increment:c}
+  ol.clean li::before{content:counter(c,decimal-leading-zero); position:absolute; left:0; top:5px;
+    font-family:var(--mono); font-size:11px; color:var(--gold)}
+
+  /* cards & grids */
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow)}
+  .card h5{margin:0 0 6px; font-family:var(--serif); font-size:1.15rem; font-weight:600}
+  .card .lane{font-family:var(--mono); font-size:11px; color:var(--gold)}
+  .card p{margin:0; font-size:13.5px}
+
+  /* callout */
+  .callout{display:flex; gap:14px; background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--gold); border-radius:12px; padding:16px 18px; margin:20px 0; box-shadow:var(--shadow)}
+  .callout .ic{flex:0 0 auto; color:var(--gold); margin-top:2px}
+  .callout p{margin:0; font-size:14px}
+  .callout strong{color:var(--ink)}
+
+  /* tables */
+  .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; margin:16px 0; box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; font-size:13px; min-width:520px}
+  thead th{background:var(--surface-2); text-align:left; font-weight:700; color:var(--ink);
+    padding:11px 14px; border-bottom:1px solid var(--line); font-size:11px; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap}
+  tbody td{padding:10px 14px; border-bottom:1px solid var(--line-soft); color:var(--ink-soft); vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:var(--surface-2)}
+  td code,.mono{font-family:var(--mono); font-size:12px; color:var(--navy-2)}
+  html[data-theme="dark"] td code,html[data-theme="dark"] .mono{color:var(--gold-soft)}
+
+  /* marks bars */
+  .marks{display:flex; flex-direction:column; gap:9px; margin:18px 0}
+  .mark{display:grid; grid-template-columns:1fr 200px 34px; align-items:center; gap:14px}
+  .mark .lbl{font-size:13px; color:var(--ink-soft)}
+  .mark .bar{height:9px; background:var(--surface-2); border-radius:999px; overflow:hidden; border:1px solid var(--line-soft)}
+  .mark .fill{height:100%; background:linear-gradient(90deg,var(--navy),var(--navy-2)); border-radius:999px}
+  .mark .fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
+  .mark .val{font-family:var(--mono); font-size:13px; text-align:right; color:var(--ink)}
+  @media(max-width:620px){.mark{grid-template-columns:1fr 90px 30px}}
+
+  /* FR list */
+  .reqs{display:flex; flex-direction:column; gap:2px; margin:12px 0}
+  .req{display:grid; grid-template-columns:64px 1fr; gap:14px; padding:9px 0; border-bottom:1px solid var(--line-soft)}
+  .req .id{font-family:var(--mono); font-size:11.5px; color:var(--gold); padding-top:2px}
+  .req .txt{font-size:13.5px; color:var(--ink-soft)}
+
+  /* lifecycle stepper */
+  .flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:0; margin:22px 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
+  .flow .node{flex:1 1 150px; min-width:150px; padding:16px 16px; background:var(--surface); border-right:1px solid var(--line-soft); position:relative}
+  .flow .node:last-child{border-right:0}
+  .flow .st{font-family:var(--mono); font-size:12px; color:var(--ink); font-weight:500}
+  .flow .by{font-size:11px; color:var(--muted); margin-top:6px; letter-spacing:.02em}
+  .flow .by b{color:var(--gold); font-weight:600}
+  .flow .node .dot{width:8px; height:8px; background:var(--gold); border-radius:50%; margin-bottom:10px}
+
+  /* module chain */
+  .chain{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0}
+  .chain .box{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:9px 13px; font-size:12.5px; font-weight:600; color:var(--ink); box-shadow:var(--shadow)}
+  .chain .box small{display:block; font-weight:500; color:var(--muted); font-size:10.5px}
+  .chain .arr{color:var(--gold); flex:0 0 auto}
+
+  /* timeline */
+  .tl{position:relative; margin:20px 0 4px; padding-left:26px}
+  .tl::before{content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line)}
+  .tl .day{position:relative; padding:0 0 26px 20px}
+  .tl .day::before{content:""; position:absolute; left:-24px; top:3px; width:12px; height:12px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--gold)}
+  .tl .day .d{font-family:var(--serif); font-size:1.25rem; font-weight:600; color:var(--ink)}
+  .tl .day .goal{font-size:12px; color:var(--gold); font-weight:600; margin:2px 0 8px; letter-spacing:.02em}
+
+  /* glossary */
+  .term{padding:14px 0; border-bottom:1px solid var(--line-soft)}
+  .term .t{font-family:var(--serif); font-size:1.2rem; font-weight:600; color:var(--ink)}
+  .term .d{font-size:13.5px; color:var(--ink-soft); margin-top:3px}
+  .term .avoid{font-size:12px; color:var(--muted); margin-top:5px}
+  .term .avoid b{color:var(--danger); font-weight:600; letter-spacing:.04em; text-transform:uppercase; font-size:10px}
+
+  /* code card */
+  .code{background:#12162e; border-radius:12px; margin:16px 0; overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line)}
+  html[data-theme="dark"] .code{background:#0a0c1a}
+  .code .bar{display:flex; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid rgba(255,255,255,.08)}
+  .code .bar .lg{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#9aa0c0}
+  .code pre{margin:0; padding:16px 18px; overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.7; color:#d7dbf0}
+  .code pre .c{color:#7b83a8}
+  .pill{display:inline-block; font-family:var(--mono); font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--ink-soft); background:var(--surface-2)}
+
+  /* mobile top bar */
+  .topbar{display:none; position:sticky; top:0; z-index:100; background:var(--surface); border-bottom:1px solid var(--line);
+    padding:12px 18px; align-items:center; justify-content:space-between}
+  .topbar .name{font-family:var(--serif); font-weight:600; font-size:18px}
+  .iconbtn{display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer}
+  .scrim{display:none; position:fixed; inset:0; background:rgba(10,12,26,.5); z-index:98}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none}}
+
+  @media(max-width:960px){
+    .wrap{grid-template-columns:1fr}
+    aside{position:fixed; z-index:99; width:300px; left:0; top:0; transform:translateX(-102%); transition:transform .28s ease; box-shadow:var(--shadow)}
+    aside.open{transform:none}
+    .topbar{display:flex}
+    .inner{padding:0 22px 90px}
+    header.hero{padding:40px 0 30px}
+    .grid.g2,.grid.g3{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="iconbtn" id="menuBtn" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <span class="name">Serendib ERP</span>
+  </div>
+  <button class="iconbtn" id="themeBtnM" aria-label="Toggle theme">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 4 4M20 20l-1-1M5 19l-1 1M20 4l-1 1"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="wrap">
+  <aside id="sidebar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M20 3 33 13 20 37 7 13Z" fill="none" stroke="var(--gold)" stroke-width="1.4"/>
+          <path d="M7 13h26M20 3v34M13.5 13 20 37 26.5 13M20 3l-6.5 10M20 3l6.5 10" stroke="var(--navy-2)" stroke-width="1" opacity="0.75"/>
+        </svg>
+      </span>
+      <span>
+        <span class="name">Serendib Gems</span>
+        <span class="sub">ERP · Team Hub</span>
+      </span>
+    </div>
+
+    <nav id="nav">
+      <a href="#overview"><span class="idx">00</span><span>Overview &amp; Marks</span></a>
+      <a href="#glossary"><span class="idx">01</span><span>Glossary</span></a>
+      <a href="#srs"><span class="idx">02</span><span>Requirements (SRS)</span></a>
+      <a href="#plan"><span class="idx">03</span><span>Implementation Plan</span></a>
+      <a href="#database"><span class="idx">04</span><span>Database Design</span></a>
+      <a href="#bpa"><span class="idx">05</span><span>Process Analysis</span></a>
+      <a href="#git"><span class="idx">06</span><span>Git Workflow</span></a>
+      <a href="#adr"><span class="idx">07</span><span>Stack Decision</span></a>
+      <a href="#integration"><span class="idx">08</span><span>How It Connects</span></a>
+    </nav>
+
+    <div class="aside-foot">
+      <div class="chiprow">
+        <span class="chip">7 members</span>
+        <span class="chip">20 marks</span>
+        <span class="chip">Azure</span>
+      </div>
+      <button class="toggle" id="themeBtn">
+        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5 4 4M20 20l-1-1M5 19l-1 1M20 4l-1 1"/></svg>
+        <span id="themeLbl">Dark mode</span>
+      </button>
+      <div style="font-size:11px;color:var(--muted);line-height:1.5">Single source of truth. Read before you build.</div>
+    </div>
+  </aside>
+
+  <main>
+  <div class="inner">
+
+    <header class="hero" id="top">
+      <div class="eyebrow">Team Sync Point</div>
+      <h1>Serendib&nbsp;Gems<br>ERP&nbsp;System</h1>
+      <p class="lede">One connected system that runs a Sri Lankan gem house, from buying rough stones to cutting, stock, sales and money. This page holds the full plan, the requirements, and the database in one place, so all seven of us build the same thing.</p>
+
+      <div class="facet" aria-hidden="true">
+        <svg width="100%" height="64" viewBox="0 0 800 64" preserveAspectRatio="none">
+          <line x1="0" y1="32" x2="800" y2="32" stroke="var(--line)" stroke-width="1"/>
+          <path d="M370 12 L400 6 L430 12 L415 32 L400 58 L385 32 Z" fill="none" stroke="var(--gold)" stroke-width="1.3"/>
+          <path d="M370 12 L430 12 M400 6 L400 58 M385 32 L415 32 M385 32 L400 6 L415 32" stroke="var(--navy-2)" stroke-width=".8" opacity=".7"/>
+        </svg>
+      </div>
+
+      <div class="meta">
+        <div class="m"><div class="k">Deliver by</div><div class="v">13 Jul <small>presentation</small></div></div>
+        <div class="m"><div class="k">Team</div><div class="v">7 <small>one lane each</small></div></div>
+        <div class="m"><div class="k">Modules</div><div class="v">6 <small>+ login &amp; dashboard</small></div></div>
+        <div class="m"><div class="k">Total</div><div class="v">20 <small>marks</small></div></div>
+      </div>
+    </header>
+
+    <!-- 00 OVERVIEW -->
+    <section id="overview" class="reveal">
+      <div class="s-head"><span class="s-num">00</span><div><span class="tag">Start here</span><h2>Overview &amp; where the marks are</h2></div></div>
+      <hr class="rule">
+      <p class="lead">Serendib Gems is a gem business. This ERP is the internal system its staff use to run daily work. It has six modules that share the same data, plus a login and a dashboard. A separate public storefront is the customer channel that sends orders into the ERP.</p>
+      <p>The assignment asks each group to pick one industry, design at least four connected ERP modules, build a working prototype, deploy it to Microsoft Azure, and keep one GitHub repo with commits from every member. We chose a gem house because the modules share one clear thread: the life of a single stone.</p>
+
+      <h4>Mark allocation (out of 20)</h4>
+      <p style="font-size:13px">The plan is built to protect the biggest blocks first: the modules working and the modules being connected (8 marks), then a clean UI and a real Azure deploy (6 marks).</p>
+      <div class="marks">
+        <div class="mark"><span class="lbl">ERP module selection &amp; process integration</span><span class="bar"><span class="fill gold" style="width:100%"></span></span><span class="val">4</span></div>
+        <div class="mark"><span class="lbl">Functional implementation of modules</span><span class="bar"><span class="fill gold" style="width:100%"></span></span><span class="val">4</span></div>
+        <div class="mark"><span class="lbl">Frontend design, UI &amp; navigation</span><span class="bar"><span class="fill" style="width:75%"></span></span><span class="val">3</span></div>
+        <div class="mark"><span class="lbl">Azure cloud deployment</span><span class="bar"><span class="fill" style="width:75%"></span></span><span class="val">3</span></div>
+        <div class="mark"><span class="lbl">Backend &amp; database functionality</span><span class="bar"><span class="fill" style="width:50%"></span></span><span class="val">2</span></div>
+        <div class="mark"><span class="lbl">Presentation &amp; demonstration</span><span class="bar"><span class="fill" style="width:50%"></span></span><span class="val">2</span></div>
+        <div class="mark"><span class="lbl">Business process analysis</span><span class="bar"><span class="fill" style="width:25%"></span></span><span class="val">1</span></div>
+        <div class="mark"><span class="lbl">GitHub repo, commits &amp; team contribution</span><span class="bar"><span class="fill" style="width:25%"></span></span><span class="val">1</span></div>
+      </div>
+
+      <h4>The six modules</h4>
+      <div class="grid g3">
+        <div class="card"><h5>Inventory</h5><p>The gem lots and their details. Every other module reads or writes lots.</p></div>
+        <div class="card"><h5>Procurement</h5><p>Suppliers and purchases. Buying rough stones adds them to inventory.</p></div>
+        <div class="card"><h5>Cutting &amp; Workshop</h5><p>Cutting jobs that turn a rough stone into a finished stone.</p></div>
+        <div class="card"><h5>Sales</h5><p>Customers and orders. Selling a stone reduces stock.</p></div>
+        <div class="card"><h5>Billing</h5><p>Invoices and payments, plus a simple revenue report.</p></div>
+        <div class="card"><h5>HR &amp; Staff</h5><p>Employees, including the cutters and the sales staff.</p></div>
+      </div>
+
+      <h4>Tech stack</h4>
+      <div class="chiprow" style="gap:8px;margin-top:4px">
+        <span class="chip">React (Vite)</span><span class="chip">Node · Express</span><span class="chip">Azure SQL</span>
+        <span class="chip">Azure App Service</span><span class="chip">One deployable app</span>
+      </div>
+    </section>
+
+    <!-- 01 GLOSSARY -->
+    <section id="glossary" class="reveal">
+      <div class="s-head"><span class="s-num">01</span><div><span class="tag">Shared language</span><h2>Glossary</h2></div></div>
+      <hr class="rule">
+      <p>These are the words we agree to use, so all seven of us mean the same thing. This is a glossary only, not a place for design or code decisions.</p>
+
+      <div class="term"><div class="t">Lot</div><div class="d">The single unit of inventory, which is one physical gemstone. Tracked from purchase to sale. Every Lot has a status that other modules change.</div><div class="avoid"><b>Avoid</b> · item, product, stone (in code), SKU</div></div>
+      <div class="term"><div class="t">Rough</div><div class="d">A Lot that has been bought but not cut yet. It enters inventory through a Purchase.</div><div class="avoid"><b>Avoid</b> · raw, uncut stone</div></div>
+      <div class="term"><div class="t">Finished</div><div class="d">A Lot that has been cut and is ready to sell. Produced by a Cutting Job from a Rough Lot.</div><div class="avoid"><b>Avoid</b> · polished, cut stone, final product</div></div>
+      <div class="term"><div class="t">Lot Status</div><div class="d">The shared field that proves integration. It moves through: In Stock (rough), In Cutting, In Stock (finished), Reserved, Sold. Procurement, Cutting and Sales all write to it.</div><div class="avoid"><b>Avoid</b> · state, stage, condition</div></div>
+      <div class="term"><div class="t">Certification</div><div class="d">The independent lab grading of a Lot: a lab name plus a certificate number, for example GIA, GRS, SSEF. Recorded against the Lot.</div><div class="avoid"><b>Avoid</b> · cert (in prose), grading paper, report</div></div>
+      <div class="term"><div class="t">Supplier</div><div class="d">A party the gem house buys Rough from, such as a miner, a dealer, or an estate.</div><div class="avoid"><b>Avoid</b> · vendor, miner (as the main word), seller</div></div>
+      <div class="term"><div class="t">Purchase</div><div class="d">A buying transaction with a Supplier. Receiving it creates or updates Rough Lots in Inventory and raises the amount owed to the Supplier.</div><div class="avoid"><b>Avoid</b> · procurement order (that is the module name), buy, PO</div></div>
+      <div class="term"><div class="t">Cutting Job</div><div class="d">The workshop task that turns one Rough Lot into a Finished Lot. Assigned to a Cutter.</div><div class="avoid"><b>Avoid</b> · job (alone), work order, production run</div></div>
+      <div class="term"><div class="t">Cutter</div><div class="d">A staff member in HR who does Cutting Jobs. A Cutter is a kind of Employee.</div><div class="avoid"><b>Avoid</b> · worker, craftsman, lapidary</div></div>
+      <div class="term"><div class="t">Customer Order</div><div class="d">A request from a Customer to buy one or more Finished Lots. Placing it Reserves the Lots. Confirming it marks them Sold. Can come from the storefront or a walk-in.</div><div class="avoid"><b>Avoid</b> · order (alone), sale, transaction, cart</div></div>
+      <div class="term"><div class="t">Customer</div><div class="d">A person or an organisation that places Customer Orders.</div><div class="avoid"><b>Avoid</b> · client, buyer, account</div></div>
+      <div class="term"><div class="t">Invoice</div><div class="d">The request for payment raised to a Customer once a Customer Order is confirmed.</div><div class="avoid"><b>Avoid</b> · bill, receipt, statement</div></div>
+      <div class="term"><div class="t">Payment</div><div class="d">Money received against an Invoice. Fully paid Invoices count toward revenue.</div><div class="avoid"><b>Avoid</b> · transaction, settlement</div></div>
+      <div class="term"><div class="t">Employee</div><div class="d">A person who works for the gem house, recorded in HR. A Cutter is one type of Employee.</div><div class="avoid"><b>Avoid</b> · staff member (in code), user</div></div>
+      <div class="term"><div class="t">User</div><div class="d">A login account for the ERP, with a role that controls what that person can see and do. A User is not the same as an Employee.</div><div class="avoid"><b>Avoid</b> · account, member, login</div></div>
+    </section>
+
+    <!-- 02 SRS -->
+    <section id="srs" class="reveal">
+      <div class="s-head"><span class="s-num">02</span><div><span class="tag">What we must build</span><h2>Software Requirements (SRS)</h2></div></div>
+      <hr class="rule">
+
+      <h3>1. Purpose &amp; scope</h3>
+      <p>Serendib Gems is a gem business in Sri Lanka. Many gem businesses still work on paper and separate spreadsheets, so it is hard to know the real stock, the real profit, or where each stone is. This ERP puts everything into one connected system with six modules that share the same data, plus a login with roles and a dashboard. It is a prototype: it does not need every feature of a commercial ERP, but it must clearly show how business processes join together and how data flows between modules. It will be deployed to Microsoft Azure and be reachable by a public URL during the presentation.</p>
+
+      <h3>2. Users &amp; roles</h3>
+      <ul class="clean">
+        <li><strong>Administrator</strong> — can see and do everything. Used for the demo and setup.</li>
+        <li><strong>Inventory &amp; Procurement staff</strong> — manage lots, suppliers, and purchases.</li>
+        <li><strong>Workshop staff</strong> — manage cutting jobs.</li>
+        <li><strong>Sales staff</strong> — manage customers, orders, invoices, and payments.</li>
+        <li><strong>HR staff</strong> — manage employees.</li>
+      </ul>
+      <p style="font-size:13px">For a prototype, roles mainly control which menu items and pages a user can open.</p>
+
+      <h3>3. Environment &amp; constraints</h3>
+      <ul class="clean">
+        <li>Client: any modern web browser on a laptop or phone.</li>
+        <li>Server: Node.js on Azure App Service. Database: Azure SQL Database.</li>
+        <li>Must deploy to Azure and be reachable by a public URL. Database must be Azure SQL (relational), as named in the brief.</li>
+        <li>One GitHub repository with regular commits from all members. The team writes JavaScript, so the stack is React and Node.</li>
+      </ul>
+
+      <h3>4. Functional requirements</h3>
+
+      <h4>Authentication &amp; access</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-1</span><span class="txt">Let a user log in with an email and a password.</span></div>
+        <div class="req"><span class="id">FR-2</span><span class="txt">Reject a wrong email or password with a clear message.</span></div>
+        <div class="req"><span class="id">FR-3</span><span class="txt">Keep the user logged in using a token, until they log out.</span></div>
+        <div class="req"><span class="id">FR-4</span><span class="txt">Show menu items based on the user role.</span></div>
+        <div class="req"><span class="id">FR-5</span><span class="txt">Let a user log out.</span></div>
+      </div>
+
+      <h4>Inventory module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-6</span><span class="txt">Add a new Lot with: name, gem type, colour, carat, cut, clarity, origin, treatment, certificate lab, certificate number, cost price, sale price, and a photo.</span></div>
+        <div class="req"><span class="id">FR-7</span><span class="txt">Give each Lot a status. New rough lots start as In Stock (rough).</span></div>
+        <div class="req"><span class="id">FR-8</span><span class="txt">View a list of all Lots, with a filter by gem type, status, and origin.</span></div>
+        <div class="req"><span class="id">FR-9</span><span class="txt">Open one Lot and see all its details and its current status.</span></div>
+        <div class="req"><span class="id">FR-10</span><span class="txt">Edit a Lot's details.</span></div>
+        <div class="req"><span class="id">FR-11</span><span class="txt">Show a warning when finished lots in stock fall below a set level.</span></div>
+        <div class="req"><span class="id">FR-12</span><span class="txt">Do not let a Lot be deleted if it is linked to a confirmed order.</span></div>
+      </div>
+
+      <h4>Procurement module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-13</span><span class="txt">Add and edit Suppliers, with name, contact, and country.</span></div>
+        <div class="req"><span class="id">FR-14</span><span class="txt">Record a Purchase from a Supplier, listing the rough stones bought and their cost.</span></div>
+        <div class="req"><span class="id">FR-15</span><span class="txt">When a Purchase is received, create the matching Rough Lots in Inventory with status In Stock (rough).</span></div>
+        <div class="req"><span class="id">FR-16</span><span class="txt">Show, for each Supplier, the total amount purchased from them.</span></div>
+        <div class="req"><span class="id">FR-17</span><span class="txt">View a list of all Purchases.</span></div>
+      </div>
+
+      <h4>Cutting &amp; Workshop module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-18</span><span class="txt">Create a Cutting Job that selects one Rough Lot and assigns one Cutter.</span></div>
+        <div class="req"><span class="id">FR-19</span><span class="txt">When a Cutting Job is started, set that Lot status to In Cutting.</span></div>
+        <div class="req"><span class="id">FR-20</span><span class="txt">When a Cutting Job is completed, set that Lot status to In Stock (finished) and mark it Finished.</span></div>
+        <div class="req"><span class="id">FR-21</span><span class="txt">View all Cutting Jobs and their status (Pending, In Progress, Done).</span></div>
+        <div class="req"><span class="id">FR-22</span><span class="txt">Do not allow a Cutting Job on a Lot that is already Finished, Reserved, or Sold.</span></div>
+      </div>
+
+      <h4>Sales module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-23</span><span class="txt">Add and edit Customers, with name, email, phone, and address.</span></div>
+        <div class="req"><span class="id">FR-24</span><span class="txt">Create a Customer Order and add one or more Finished Lots to it.</span></div>
+        <div class="req"><span class="id">FR-25</span><span class="txt">When a Lot is added to an order, set that Lot status to Reserved so it cannot be sold twice.</span></div>
+        <div class="req"><span class="id">FR-26</span><span class="txt">When an order is confirmed, set the Lots to Sold and reduce stock.</span></div>
+        <div class="req"><span class="id">FR-27</span><span class="txt">Cancel an order that is not yet confirmed, and return the Lots to In Stock (finished).</span></div>
+        <div class="req"><span class="id">FR-28</span><span class="txt">Accept orders that arrive from the public storefront and create them in Sales.</span></div>
+        <div class="req"><span class="id">FR-29</span><span class="txt">Show a list of all orders with their status (Draft, Confirmed, Cancelled).</span></div>
+      </div>
+
+      <h4>Billing module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-30</span><span class="txt">When an order is confirmed, create an Invoice for that order with the total amount.</span></div>
+        <div class="req"><span class="id">FR-31</span><span class="txt">Record a Payment against an Invoice.</span></div>
+        <div class="req"><span class="id">FR-32</span><span class="txt">Mark an Invoice as Paid when payments cover the full amount, or Partly Paid otherwise.</span></div>
+        <div class="req"><span class="id">FR-33</span><span class="txt">Show a simple revenue report: total sales, total received, total still owed.</span></div>
+        <div class="req"><span class="id">FR-34</span><span class="txt">View and save a single invoice.</span></div>
+      </div>
+
+      <h4>HR &amp; Staff module</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-35</span><span class="txt">Add and edit Employees, with name, role, department, and join date.</span></div>
+        <div class="req"><span class="id">FR-36</span><span class="txt">Mark which Employees are Cutters, so the Cutting module can assign them.</span></div>
+        <div class="req"><span class="id">FR-37</span><span class="txt">Show a list of all Employees.</span></div>
+      </div>
+
+      <h4>Dashboard</h4>
+      <div class="reqs">
+        <div class="req"><span class="id">FR-38</span><span class="txt">Show a dashboard after login with: total lots in stock, total stock value, lots by status, orders this period, revenue this period, and low stock warnings.</span></div>
+        <div class="req"><span class="id">FR-39</span><span class="txt">Dashboard numbers come live from the database, not typed in by hand.</span></div>
+      </div>
+
+      <h3>5. Non functional requirements</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Area</th><th>Requirement</th></tr></thead>
+          <tbody>
+            <tr><td><code>NFR-1</code></td><td>Performance</td><td>A normal page loads in about 3 seconds or less.</td></tr>
+            <tr><td><code>NFR-2</code></td><td>Usability</td><td>A new user can find a module without training.</td></tr>
+            <tr><td><code>NFR-3</code></td><td>Security</td><td>Passwords stored hashed, never plain text. Only logged-in users reach the API.</td></tr>
+            <tr><td><code>NFR-4</code></td><td>Reliability</td><td>The deployed system stays reachable during the presentation.</td></tr>
+            <tr><td><code>NFR-5</code></td><td>Portability</td><td>Runs in any modern browser on desktop and mobile.</td></tr>
+            <tr><td><code>NFR-6</code></td><td>Maintainability</td><td>Each module keeps its code in its own area.</td></tr>
+            <tr><td><code>NFR-7</code></td><td>Data integrity</td><td>Keys and relationships stop records pointing to missing data.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>6. Out of scope (prototype)</h3>
+      <ul class="clean">
+        <li>Multi currency and tax rules.</li>
+        <li>Online card payment. Payments are recorded by hand.</li>
+        <li>Detailed HR payroll.</li>
+        <li>Returns and refunds after a sale is confirmed.</li>
+        <li>Fine grained per field permissions. Roles only control page access.</li>
+      </ul>
+    </section>
+
+    <!-- 03 PLAN -->
+    <section id="plan" class="reveal">
+      <div class="s-head"><span class="s-num">03</span><div><span class="tag">Who, what, when</span><h2>Implementation Plan</h2></div></div>
+      <hr class="rule">
+      <p class="lead">The goal: a working prototype ERP with six connected modules, a login and a dashboard, deployed to Azure, in one GitHub repo with commits from all seven members.</p>
+
+      <h3>The seven lanes</h3>
+      <p style="font-size:13px">Each person owns one lane: they write the code, commit under their own name, and can explain it in the viva. The AI helps write code, but the owner reviews, tests, commits and learns it. Fill your name in the repo copy of this table.</p>
+      <div class="grid g2">
+        <div class="card"><span class="lane">Lane 1</span><h5>Inventory</h5><p>Lot list, add or edit a lot, filters, photos, status badges. This is the template all other modules copy.</p></div>
+        <div class="card"><span class="lane">Lane 2</span><h5>Procurement</h5><p>Suppliers, purchases, and the action that adds bought stones into Inventory as rough lots.</p></div>
+        <div class="card"><span class="lane">Lane 3</span><h5>Cutting &amp; Workshop</h5><p>Cutting jobs, assign a cutter, and the status change from rough to finished.</p></div>
+        <div class="card"><span class="lane">Lane 4</span><h5>Sales</h5><p>Customers, customer orders, reserve and sell lots, and accept orders from the storefront.</p></div>
+        <div class="card"><span class="lane">Lane 5</span><h5>Billing</h5><p>Invoices, payments, invoice view, and the revenue report.</p></div>
+        <div class="card"><span class="lane">Lane 6</span><h5>Auth &amp; Dashboard</h5><p>Login page, roles, the menu, and the dashboard with live numbers.</p></div>
+        <div class="card" style="grid-column:1 / -1"><span class="lane">Lane 7</span><h5>Platform</h5><p>Azure setup and deployment, the database scripts, wiring the storefront in, the README and the report.</p></div>
+      </div>
+
+      <h3>Repository layout</h3>
+      <div class="code"><div class="bar"><span class="lg">serendib-erp</span></div><pre>serendib-erp/
+  client/        React admin app (all six modules as pages)
+  server/        Express API + serves the client build
+  storefront/    The public gem shop, sends orders to the API
+  db/            schema.sql and seed.sql
+  docs/          plan, SRS, database design, git workflow, ADRs
+  CONTEXT.md     the glossary
+  README.md</pre></div>
+
+      <h3>Four day plan</h3>
+      <div class="tl">
+        <div class="day"><div class="d">Day 1 — Foundation &amp; first module</div><div class="goal">Target: log in, open Inventory, add a lot, and it runs on Azure.</div>
+          <ul class="clean"><li>Platform: create Azure SQL, run schema and seed, set up empty Express + React, deploy a hello world to Azure early.</li><li>Auth: login, token check, empty dashboard shell with the menu.</li><li>Inventory: built end to end as the pattern the others copy.</li></ul></div>
+        <div class="day"><div class="d">Day 2 — Next three modules</div><div class="goal">Target: a stone can flow purchase to cut to sold, status visible.</div>
+          <ul class="clean"><li>Procurement, Cutting and Sales copy the Inventory pattern.</li><li>Focus on the status changes at each step.</li></ul></div>
+        <div class="day"><div class="d">Day 3 — Money, staff, dashboard, storefront</div><div class="goal">Target: full chain works, dashboard shows real totals.</div>
+          <ul class="clean"><li>Billing: invoices, payments, revenue report.</li><li>HR: employees and cutters (light module).</li><li>Dashboard filled with live numbers. Storefront wired to Sales.</li></ul></div>
+        <div class="day"><div class="d">Day 4 — Deploy, polish, prepare</div><div class="goal">Target: final deploy, docs done, everyone committed, rehearsed.</div>
+          <ul class="clean"><li>Deploy final version, test from phone and laptop.</li><li>Polish UI and navigation. Write the 3 page report and 10 slides.</li><li>Confirm every member has commits. Rehearse the demo.</li></ul></div>
+      </div>
+
+      <h3>Milestones</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Checkpoint</th><th>Done means</th></tr></thead>
+        <tbody>
+          <tr><td><code>M1</code> end of Day 1</td><td>Login works, Inventory works, app is live on Azure.</td></tr>
+          <tr><td><code>M2</code> end of Day 2</td><td>Four modules work and a stone can flow rough to sold.</td></tr>
+          <tr><td><code>M3</code> end of Day 3</td><td>All six modules plus dashboard plus storefront link work.</td></tr>
+          <tr><td><code>M4</code> end of Day 4</td><td>Final deploy, report and slides done, everyone committed, rehearsed.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Risks &amp; handling</h3>
+      <ul class="clean">
+        <li><strong>Azure deploy fails on the last day</strong> — deploy on Day 1 and keep deploying, so it is never a surprise.</li>
+        <li><strong>Two people edit the same file</strong> — one folder per module, small frequent commits.</li>
+        <li><strong>A member goes quiet</strong> — modules follow the same pattern so anyone can pick one up.</li>
+        <li><strong>Running out of time</strong> — HR is the lightest module and can be trimmed. The four minimum modules come first.</li>
+      </ul>
+
+      <h3>Definition of done (any module)</h3>
+      <ul class="clean">
+        <li>You can add, view, and edit its records.</li>
+        <li>Its data is saved in Azure SQL, not just in the browser.</li>
+        <li>Its part of the integration chain works (the correct Lot status change happens).</li>
+        <li>Its pages use the shared gem design and appear in the menu.</li>
+        <li>The owner has committed it and can explain it.</li>
+      </ul>
+    </section>
+
+    <!-- 04 DATABASE -->
+    <section id="database" class="reveal">
+      <div class="s-head"><span class="s-num">04</span><div><span class="tag">Azure SQL</span><h2>Database Design</h2></div></div>
+      <hr class="rule">
+      <p class="lead">There is one central table, <span class="mono">Lots</span>. One row is one gemstone. Almost every other table points to a Lot, a customer, a supplier, or an order. The <span class="mono">Lots.status</span> column is the shared field that Procurement, Cutting and Sales all change. That single column is the heart of the integration story.</p>
+
+      <h3>Tables</h3>
+
+      <h4>Users</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>user_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>name</code></td><td>NVARCHAR(100)</td><td></td></tr>
+        <tr><td><code>email</code></td><td>NVARCHAR(150)</td><td>unique</td></tr>
+        <tr><td><code>password_hash</code></td><td>NVARCHAR(255)</td><td>hashed, never plain text</td></tr>
+        <tr><td><code>role</code></td><td>NVARCHAR(30)</td><td>Admin, Inventory, Workshop, Sales, HR</td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>Suppliers</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>supplier_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>name</code></td><td>NVARCHAR(150)</td><td></td></tr>
+        <tr><td><code>contact</code></td><td>NVARCHAR(100)</td><td>phone or email</td></tr>
+        <tr><td><code>country</code></td><td>NVARCHAR(80)</td><td></td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>Purchases</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>purchase_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>supplier_id</code></td><td>INT, FK → Suppliers</td><td></td></tr>
+        <tr><td><code>purchase_date</code></td><td>DATE</td><td></td></tr>
+        <tr><td><code>total_cost</code></td><td>DECIMAL(12,2)</td><td></td></tr>
+        <tr><td><code>status</code></td><td>NVARCHAR(20)</td><td>Ordered, Received</td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>Lots — the central table</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>lot_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>lot_code</code></td><td>NVARCHAR(30)</td><td>shown to users, e.g. LOT-001</td></tr>
+        <tr><td><code>name</code></td><td>NVARCHAR(120)</td><td>e.g. Ceylon Sapphire</td></tr>
+        <tr><td><code>gem_type</code></td><td>NVARCHAR(50)</td><td>Sapphire, Ruby, Emerald</td></tr>
+        <tr><td><code>color</code></td><td>NVARCHAR(40)</td><td></td></tr>
+        <tr><td><code>carat</code></td><td>DECIMAL(6,2)</td><td></td></tr>
+        <tr><td><code>cut</code></td><td>NVARCHAR(40)</td><td>Cushion, Oval</td></tr>
+        <tr><td><code>clarity</code></td><td>NVARCHAR(20)</td><td></td></tr>
+        <tr><td><code>origin</code></td><td>NVARCHAR(80)</td><td>e.g. Ratnapura</td></tr>
+        <tr><td><code>treatment</code></td><td>NVARCHAR(60)</td><td>e.g. No heat</td></tr>
+        <tr><td><code>cert_lab</code></td><td>NVARCHAR(30)</td><td>GIA, GRS, SSEF</td></tr>
+        <tr><td><code>cert_no</code></td><td>NVARCHAR(50)</td><td></td></tr>
+        <tr><td><code>cost_price</code></td><td>DECIMAL(12,2)</td><td>what we paid</td></tr>
+        <tr><td><code>sale_price</code></td><td>DECIMAL(12,2)</td><td>what we sell for</td></tr>
+        <tr><td><code>status</code></td><td>NVARCHAR(30)</td><td>the shared status field</td></tr>
+        <tr><td><code>is_finished</code></td><td>BIT</td><td>0 rough, 1 finished</td></tr>
+        <tr><td><code>image_url</code></td><td>NVARCHAR(255)</td><td></td></tr>
+        <tr><td><code>supplier_id</code></td><td>INT, FK → Suppliers</td><td>where it came from</td></tr>
+        <tr><td><code>purchase_id</code></td><td>INT, FK → Purchases</td><td>which purchase brought it</td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>CuttingJobs</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>job_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>lot_id</code></td><td>INT, FK → Lots</td><td>the stone being cut</td></tr>
+        <tr><td><code>cutter_id</code></td><td>INT, FK → Employees</td><td>who cuts it</td></tr>
+        <tr><td><code>start_date</code></td><td>DATE</td><td></td></tr>
+        <tr><td><code>end_date</code></td><td>DATE</td><td>null until done</td></tr>
+        <tr><td><code>status</code></td><td>NVARCHAR(20)</td><td>Pending, In Progress, Done</td></tr>
+        <tr><td><code>notes</code></td><td>NVARCHAR(255)</td><td></td></tr>
+      </tbody></table></div>
+
+      <h4>Customers</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>customer_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>name</code></td><td>NVARCHAR(150)</td><td></td></tr>
+        <tr><td><code>email</code></td><td>NVARCHAR(150)</td><td></td></tr>
+        <tr><td><code>phone</code></td><td>NVARCHAR(40)</td><td></td></tr>
+        <tr><td><code>address</code></td><td>NVARCHAR(255)</td><td></td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>Orders</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>order_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>customer_id</code></td><td>INT, FK → Customers</td><td></td></tr>
+        <tr><td><code>order_date</code></td><td>DATE</td><td></td></tr>
+        <tr><td><code>status</code></td><td>NVARCHAR(20)</td><td>Draft, Confirmed, Cancelled</td></tr>
+        <tr><td><code>channel</code></td><td>NVARCHAR(20)</td><td>Storefront, WalkIn</td></tr>
+        <tr><td><code>total_amount</code></td><td>DECIMAL(12,2)</td><td></td></tr>
+        <tr><td><code>created_at</code></td><td>DATETIME</td><td>default now</td></tr>
+      </tbody></table></div>
+
+      <h4>OrderItems</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>order_item_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>order_id</code></td><td>INT, FK → Orders</td><td></td></tr>
+        <tr><td><code>lot_id</code></td><td>INT, FK → Lots</td><td></td></tr>
+        <tr><td><code>price</code></td><td>DECIMAL(12,2)</td><td>price at time of sale</td></tr>
+      </tbody></table></div>
+
+      <h4>Invoices</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>invoice_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>order_id</code></td><td>INT, FK → Orders</td><td></td></tr>
+        <tr><td><code>invoice_date</code></td><td>DATE</td><td></td></tr>
+        <tr><td><code>amount</code></td><td>DECIMAL(12,2)</td><td></td></tr>
+        <tr><td><code>status</code></td><td>NVARCHAR(20)</td><td>Unpaid, Partly Paid, Paid</td></tr>
+      </tbody></table></div>
+
+      <h4>Payments</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>payment_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>invoice_id</code></td><td>INT, FK → Invoices</td><td></td></tr>
+        <tr><td><code>payment_date</code></td><td>DATE</td><td></td></tr>
+        <tr><td><code>amount</code></td><td>DECIMAL(12,2)</td><td></td></tr>
+        <tr><td><code>method</code></td><td>NVARCHAR(30)</td><td>Cash, Bank, Card</td></tr>
+      </tbody></table></div>
+
+      <h4>Employees</h4>
+      <div class="table-wrap"><table><thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>employee_id</code></td><td>INT, PK, identity</td><td></td></tr>
+        <tr><td><code>name</code></td><td>NVARCHAR(120)</td><td></td></tr>
+        <tr><td><code>role</code></td><td>NVARCHAR(50)</td><td>Cutter, Sales, Manager</td></tr>
+        <tr><td><code>department</code></td><td>NVARCHAR(50)</td><td></td></tr>
+        <tr><td><code>is_cutter</code></td><td>BIT</td><td>1 if assignable to cutting jobs</td></tr>
+        <tr><td><code>join_date</code></td><td>DATE</td><td></td></tr>
+      </tbody></table></div>
+
+      <h3>How the tables relate</h3>
+      <div class="code"><div class="bar"><span class="lg">entity relationships</span></div><pre>Suppliers --&lt; Purchases --&lt; Lots &gt;-- CuttingJobs &gt;-- Employees
+                              |
+                              v
+Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
+                 |
+                 v
+             Invoices --&lt; Payments
+
+<span class="c">// --&lt; and &gt;-- show the "many" side. One supplier has many purchases.</span></pre></div>
+
+      <h3>The status lifecycle of a Lot</h3>
+      <div class="flow">
+        <div class="node"><div class="dot"></div><div class="st">In Stock (rough)</div><div class="by">created by <b>Procurement</b></div></div>
+        <div class="node"><div class="dot"></div><div class="st">In Cutting</div><div class="by">set by <b>Cutting</b> on start</div></div>
+        <div class="node"><div class="dot"></div><div class="st">In Stock (finished)</div><div class="by">set by <b>Cutting</b> on done</div></div>
+        <div class="node"><div class="dot"></div><div class="st">Reserved</div><div class="by">set by <b>Sales</b> on order</div></div>
+        <div class="node"><div class="dot"></div><div class="st">Sold</div><div class="by">set by <b>Sales</b> on confirm</div></div>
+      </div>
+      <p style="font-size:13px">Three modules write to this one column. That is the integration, shown on one screen.</p>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7v6c0 5 3.5 8 9 9 5.5-1 9-4 9-9V7Z"/></svg></span>
+        <p><strong>Developer notes.</strong> Use foreign keys so bad data cannot be saved. Money columns use DECIMAL, not FLOAT, so amounts stay exact. Keep the schema in <span class="mono">db/schema.sql</span> so anyone can rebuild the database. Seed reuses the twelve gems from the old storefront as starting Finished lots, plus a few suppliers, customers, employees and one Admin user.</p></div>
+    </section>
+
+    <!-- 05 BPA -->
+    <section id="bpa" class="reveal">
+      <div class="s-head"><span class="s-num">05</span><div><span class="tag">Why an ERP</span><h2>Business Process Analysis</h2></div></div>
+      <hr class="rule">
+      <p>Serendib Gems is a gem house in Sri Lanka. Sri Lanka is famous for gemstones, especially sapphires from the Ratnapura area. A gem house buys rough stones, gets them cut and polished, keeps them in stock, and sells finished stones to customers, both local and foreign.</p>
+
+      <h3>The five main processes</h3>
+      <ol class="clean">
+        <li>Buying rough stones from suppliers (miners, dealers, estates).</li>
+        <li>Cutting and polishing. Skilled cutters turn a rough stone into a finished stone.</li>
+        <li>Holding stock. Finished stones are kept safely, each with details and a lab certificate.</li>
+        <li>Selling. Customers buy finished stones, by visiting or through the online shop.</li>
+        <li>Handling money and staff. The business raises invoices, takes payments, manages staff.</li>
+      </ol>
+
+      <h3>Stakeholders</h3>
+      <ul class="clean">
+        <li><strong>Owner or manager</strong> — wants real stock, real profit, and what is selling.</li>
+        <li><strong>Procurement staff</strong> — buy rough stones and deal with suppliers.</li>
+        <li><strong>Cutters</strong> — do the cutting work in the workshop.</li>
+        <li><strong>Sales staff</strong> — deal with customers and orders.</li>
+        <li><strong>Accounts staff</strong> — handle invoices and payments.</li>
+        <li><strong>Suppliers &amp; Customers</strong> — the two outside parties.</li>
+      </ul>
+
+      <h3>The problems today</h3>
+      <ul class="clean">
+        <li>Stock is not clear. The stock book is on paper, so nobody is sure what is really in stock.</li>
+        <li>Data is repeated and does not match across the purchase book, stock book, and sales bill.</li>
+        <li>Hard to track a stone. Is it still rough, being cut, reserved, or sold?</li>
+        <li>Slow reporting. Finding profit or the best selling gem type means adding paper by hand.</li>
+        <li>No link between parts. Buying, cutting, selling and accounts are separate.</li>
+        <li>Risk of selling the same stone twice, because there is no single shared record.</li>
+      </ul>
+
+      <h3>What the ERP gives</h3>
+      <ul class="clean">
+        <li>One shared record for each stone, so stock is always correct.</li>
+        <li>A single status field showing exactly where each stone is in its life.</li>
+        <li>Automatic links: a bought stone appears in stock at once, a sold stone drops stock at once.</li>
+        <li>Fast reports: the dashboard shows stock value, sales and low stock live.</li>
+        <li>No double selling: a stone is marked Reserved as soon as it is added to an order.</li>
+        <li>Better decisions, because the owner can see real numbers any time.</li>
+      </ul>
+
+      <h3>Process to module map</h3>
+      <div class="table-wrap"><table><thead><tr><th>Business process</th><th>ERP module</th></tr></thead><tbody>
+        <tr><td>Buying rough stones</td><td>Procurement</td></tr>
+        <tr><td>Holding stock</td><td>Inventory</td></tr>
+        <tr><td>Cutting and polishing</td><td>Cutting &amp; Workshop</td></tr>
+        <tr><td>Selling</td><td>Sales</td></tr>
+        <tr><td>Money</td><td>Billing</td></tr>
+        <tr><td>Staff</td><td>HR &amp; Staff</td></tr>
+      </tbody></table></div>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"/></svg></span>
+        <p><strong>Digital transformation angle.</strong> Moving a gem house from paper books to one connected cloud system is a clear example of digital transformation. The work does not change (buy, cut, stock, sell), but the way it is recorded and connected changes completely. The result is fewer mistakes, faster answers, and one true version of the data.</p></div>
+    </section>
+
+    <!-- 06 GIT -->
+    <section id="git" class="reveal">
+      <div class="s-head"><span class="s-num">06</span><div><span class="tag">How we share code</span><h2>Git Workflow</h2></div></div>
+      <hr class="rule">
+      <p>This is how the seven of us share one GitHub repository without breaking each other's work, and how everyone gets commits under their own name (worth marks). One teammate already created the GitHub workspace. Everyone else must be added with write access. The repo name is <span class="mono">serendib-erp</span>.</p>
+
+      <h3>First time setup</h3>
+      <div class="code"><div class="bar"><span class="lg">once per person</span></div><pre>git clone &lt;the repo url&gt;
+cd serendib-erp
+git config user.name "Your Name"
+git config user.email "your-github-email@example.com"</pre></div>
+      <p style="font-size:13px">If your name and email are wrong, your commits will not count as your contribution.</p>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 8.5v7M18 10.5c0 4-6 2-6 5.5"/></svg></span>
+        <p><strong>The golden rule.</strong> The <span class="mono">main</span> branch must always work. Never push broken or half finished code straight to main. Always work on your own branch and merge through a Pull Request.</p></div>
+
+      <h3>The daily flow</h3>
+      <div class="code"><div class="bar"><span class="lg">every task</span></div><pre><span class="c"># 1. get the latest</span>
+git checkout main
+git pull
+
+<span class="c"># 2. start a branch named for your task</span>
+git checkout -b inventory-lot-list
+
+<span class="c"># 3. commit small and often, with clear messages</span>
+git add .
+git commit -m "Add lot list page with type and status filters"
+
+<span class="c"># 4. push your branch</span>
+git push -u origin inventory-lot-list</pre></div>
+      <p style="font-size:13px">Then open a Pull Request into <span class="mono">main</span>. One teammate reviews and merges. Do not merge your own PR without a quick look from someone else. Branch name examples: <span class="mono">procurement-suppliers</span>, <span class="mono">sales-order-page</span>, <span class="mono">billing-invoice</span>, <span class="mono">dashboard-kpis</span>.</p>
+
+      <h3>Never commit</h3>
+      <ul class="clean">
+        <li>The <span class="mono">.env</span> file with the database password (already in <span class="mono">.gitignore</span>).</li>
+        <li>The <span class="mono">node_modules</span> folder (rebuilt with <span class="mono">npm install</span>).</li>
+        <li>Any real client files or the real client name.</li>
+      </ul>
+
+      <h3>Making sure everyone contributes</h3>
+      <ul class="clean">
+        <li>Every member commits their own work under their own name. Do not let one person commit for everybody.</li>
+        <li>Many small commits across all four days, not one big commit at the end.</li>
+        <li>Report writers and slide makers also commit their documents into <span class="mono">docs/</span>.</li>
+      </ul>
+    </section>
+
+    <!-- 07 ADR -->
+    <section id="adr" class="reveal">
+      <div class="s-head"><span class="s-num">07</span><div><span class="tag">Decision record</span><h2>Why this stack</h2></div></div>
+      <hr class="rule">
+      <p class="lead">React + Node/Express + Azure SQL, served as a single app.</p>
+      <p>For an assignment focused on Microsoft Azure, the obvious path is ASP.NET Core with Entity Framework, the most Azure native option. We chose React + Node/Express with Azure SQL instead. The reason: the team already built a polished React gem storefront whose components and design language we reuse for the ERP screens, and the team writes JavaScript, not C#. In a four day sprint, reusing the existing React work and staying in one language is worth more than the small extra Azure fit that .NET would give.</p>
+      <p>The Express server does two jobs. It serves the built React admin app, and it exposes the REST endpoints under <span class="mono">/api</span>. Because both come from the same server, the whole system deploys as one Azure App Service: no CORS, no second host, no server side rendering setup. This is the lowest risk way to still have a real backend and a real database, which protects the Azure Deployment and Database marks. We kept Azure SQL (not Cosmos or MongoDB) because the brief names Azure SQL Database directly, and the marks reward relational database functionality.</p>
+      <h4>Considered and rejected</h4>
+      <ul class="clean">
+        <li><strong>ASP.NET Core + EF Core + Azure SQL</strong> — most Azure native and best possible marks, but needs C# and a full UI rebuild, throwing away the React storefront.</li>
+        <li><strong>Next.js + Prisma + Azure SQL</strong> — one clean codebase and reuses React, but Next.js SSR on Azure App Service has setup issues that can waste time in a short sprint.</li>
+      </ul>
+    </section>
+
+    <!-- 08 INTEGRATION -->
+    <section id="integration" class="reveal">
+      <div class="s-head"><span class="s-num">08</span><div><span class="tag">The 4-mark story</span><h2>How it all connects</h2></div></div>
+      <hr class="rule">
+      <p class="lead">This is the most important thing to be able to explain. Every gemstone is one Lot. A Lot has one <span class="mono">status</span> field. Three different modules change that same field during the normal business flow, so the modules are truly integrated, not just placed side by side.</p>
+
+      <div class="chain">
+        <span class="box">Procurement<small>buys rough</small></span>
+        <span class="arr"><svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8h15M12 3l5 5-5 5"/></svg></span>
+        <span class="box">Inventory<small>rough in stock</small></span>
+        <span class="arr"><svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8h15M12 3l5 5-5 5"/></svg></span>
+        <span class="box">Cutting<small>rough → finished</small></span>
+        <span class="arr"><svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8h15M12 3l5 5-5 5"/></svg></span>
+        <span class="box">Sales<small>reserve, then sell</small></span>
+        <span class="arr"><svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8h15M12 3l5 5-5 5"/></svg></span>
+        <span class="box">Billing<small>invoice + payment</small></span>
+        <span class="arr"><svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8h15M12 3l5 5-5 5"/></svg></span>
+        <span class="box">Dashboard<small>live totals</small></span>
+      </div>
+
+      <ol class="clean">
+        <li>Procurement buys a rough stone. The system creates a Lot with status In Stock (rough).</li>
+        <li>Cutting runs a job. The status becomes In Cutting, then In Stock (finished).</li>
+        <li>Sales adds the finished Lot to a customer order. The status becomes Reserved, then Sold.</li>
+        <li>Billing creates an invoice for that order and records payment.</li>
+        <li>The Dashboard reads all of this and shows live totals.</li>
+      </ol>
+
+      <p>So one purchase in Procurement changes what Inventory shows, what Cutting can work on, what Sales can sell, what Billing charges, and what the Dashboard reports. This single chain is what we demonstrate live and draw on the "Interaction Between ERP Modules" slide.</p>
+
+      <div class="callout" style="border-left-color:var(--navy-2)"><span class="ic" style="color:var(--navy-2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+        <p><strong>In the viva</strong>, anyone should be able to point at the Inventory list, add a purchase in Procurement, and show the same stone's status changing. That live proof is worth more than any slide.</p></div>
+
+      <p style="margin-top:34px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line-soft);padding-top:20px">Serendib Gems ERP · Team sync point · Keep this page open while you build. Every detail here matches the docs in the repository.</p>
+    </section>
+
+  </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var saved=localStorage.getItem('serendib-theme');
+  if(saved) root.setAttribute('data-theme',saved);
+  function setLbl(){
+    var d=root.getAttribute('data-theme')==='dark';
+    var lbl=document.getElementById('themeLbl'); if(lbl) lbl.textContent=d?'Light mode':'Dark mode';
+  }
+  setLbl();
+  function toggle(){
+    var d=root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme', d?'light':'dark');
+    localStorage.setItem('serendib-theme', d?'light':'dark'); setLbl();
+  }
+  var tb=document.getElementById('themeBtn'); if(tb) tb.addEventListener('click',toggle);
+  var tbm=document.getElementById('themeBtnM'); if(tbm) tbm.addEventListener('click',toggle);
+
+  // mobile drawer
+  var sb=document.getElementById('sidebar'), scrim=document.getElementById('scrim'), mb=document.getElementById('menuBtn');
+  function open(){ sb.classList.add('open'); scrim.style.display='block'; }
+  function close(){ sb.classList.remove('open'); scrim.style.display='none'; }
+  if(mb) mb.addEventListener('click',open);
+  if(scrim) scrim.addEventListener('click',close);
+  document.querySelectorAll('#nav a').forEach(function(a){ a.addEventListener('click',close); });
+
+  // progress bar
+  var prog=document.getElementById('progress');
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    prog.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+  }
+  document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  // scrollspy
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+  var obs=new IntersectionObserver(function(ents){
+    ents.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove('active');});
+        var a=map[e.target.id]; if(a) a.classList.add('active');
+      }
+    });
+  },{rootMargin:'-20% 0px -70% 0px',threshold:0});
+  document.querySelectorAll('section[id]').forEach(function(s){obs.observe(s);});
+
+  // reveal
+  var rev=new IntersectionObserver(function(ents){
+    ents.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); rev.unobserve(e.target);} });
+  },{rootMargin:'0px 0px -8% 0px',threshold:0.04});
+  document.querySelectorAll('.reveal').forEach(function(el){rev.observe(el);});
+})();
+</script>
+</body>
+</html>

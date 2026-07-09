@@ -255,6 +255,7 @@
       <a data-tab="database"><span class="idx">04</span><span>Database Design</span></a>
       <a data-tab="bpa"><span class="idx">05</span><span>Process Analysis</span></a>
       <a data-tab="git"><span class="idx">06</span><span>Git Workflow</span></a>
+      <a data-tab="commit"><span class="idx">&#9733;</span><span>Commit Your Part</span></a>
       <a data-tab="adr"><span class="idx">07</span><span>Stack Decision</span></a>
       <a data-tab="integration"><span class="idx">08</span><span>How It Connects</span></a>
     </nav>
@@ -942,6 +943,127 @@ git push -u origin inventory-lot-list</pre></div>
         <li>Many small commits across all four days, not one big commit at the end.</li>
         <li>Report writers and slide makers also commit their documents into <span class="mono">docs/</span>.</li>
       </ul>
+    </section>
+
+    <!-- ★ COMMIT YOUR PART (Day 3 split) -->
+    <section id="commit">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M3 12h6M15 12h6"/></svg> What you must know</div>
+        <ul>
+          <li>The Day 3 code is <b>already written</b>. You are <b>not</b> writing or editing any code.</li>
+          <li>You just run a few commands. One command <b>copies your finished files onto your computer</b>, and your commit puts <b>your name</b> on them.</li>
+          <li>Each person commits <b>different files</b>, so all 7 of us get our own real commit. This is the contribution mark.</li>
+        </ul>
+      </div>
+      <hr class="rule">
+
+      <p class="lead">Everyone needs their own commit on GitHub. Here is exactly how to make yours.</p>
+      <p>All the finished Day 3 work is sitting on a branch called <span class="mono">day3-source</span> &mdash; think of it as a shared drawer holding the finished files. You reach into the drawer, take out <b>your</b> files, and sign your name by committing them onto the <span class="mono">day3</span> branch. Nobody rewrites anything.</p>
+
+      <div class="callout">
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+        <p><b>You do not open or edit any file.</b> The command <span class="mono">git checkout origin/day3-source -- &lt;files&gt;</span> is what brings the finished files in. That copy <i>is</i> your change. Then you commit and push.</p>
+      </div>
+
+      <h3>Step 1 &mdash; one-time setup (once per person)</h3>
+      <div class="code"><div class="bar"><span class="lg">do this first</span></div><pre>git config --global user.name "Your Name"
+git config --global user.email "the-email-on-your-github@example.com"
+git clone https://github.com/ERP-Businessman-s/serendib-erp.git</pre></div>
+      <p style="font-size:13px">If your git email is not the same email as your GitHub account, your commit will <b>not</b> count as your contribution. This is the number one mistake, so check it.</p>
+
+      <div class="callout">
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg></span>
+        <p><b>Go one at a time.</b> In the WhatsApp group, wait for the person before you to say &ldquo;pushed&nbsp;&#9989;&rdquo; before you run your push. Use <b>Git Bash</b> (not PowerShell).</p>
+      </div>
+
+      <h3>Step 2 &mdash; run your own block</h3>
+      <p style="font-size:13px">Find your name below and paste the whole block into Git Bash. Only <i>your</i> files and message are different from everyone else.</p>
+
+      <div class="card" style="margin:14px 0 6px"><span class="lane">MEMBER 1</span><h5>Keshan &mdash; Storefront page</h5><p>The public gem shop landing page (hero, process, collection).</p></div>
+      <div class="code"><div class="bar"><span class="lg">keshan</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- storefront/
+git commit -m "Add public gem storefront landing page with hero and process"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 2</span><h5>Ashan &mdash; Shop API</h5><p>The public order API and serving the shop at /shop.</p></div>
+      <div class="code"><div class="bar"><span class="lg">ashan</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- server/src/routes/shop.js server/src/index.js
+git commit -m "Add public shop order API and serve storefront at /shop"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 3</span><h5>Vishwa &mdash; Dashboard charts</h5><p>Revenue by month, sales by channel, stock value charts.</p></div>
+      <div class="code"><div class="bar"><span class="lg">vishwa</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- client/src/pages/Dashboard.jsx server/src/routes/dashboard.js
+git commit -m "Add dashboard charts for revenue, sales channel and stock value"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 4</span><h5>Thilina &mdash; Billing invoice + report</h5><p>Printable invoice and the monthly billing report.</p></div>
+      <div class="code"><div class="bar"><span class="lg">thilina</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- client/src/pages/Billing.jsx server/src/routes/invoices.js
+git commit -m "Add printable invoice and monthly billing report"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 5</span><h5>Tharindu &mdash; Inventory history</h5><p>Lot history timeline and the inventory detail drawer.</p></div>
+      <div class="code"><div class="bar"><span class="lg">tharindu</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- client/src/pages/Inventory.jsx server/src/routes/lots.js
+git commit -m "Add lot history timeline and inventory detail drawer"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 6</span><h5>Vinuka &mdash; Cutting + Orders filters</h5><p>Status filters, cutter workload and the Online order badge.</p></div>
+      <div class="code"><div class="bar"><span class="lg">vinuka</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- client/src/pages/Cutting.jsx client/src/pages/Orders.jsx
+git commit -m "Add cutting and orders filters with cutter workload"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <div class="card" style="margin:22px 0 6px"><span class="lane">MEMBER 7</span><h5>Hasitha &mdash; Search + icons</h5><p>Search box in the module tables and the new icons.</p></div>
+      <div class="code"><div class="bar"><span class="lg">hasitha</span></div><pre>cd serendib-erp
+git fetch origin
+git switch day3 || git switch -c day3 origin/day3
+git pull --rebase origin day3
+git checkout origin/day3-source -- client/src/pages/SimpleModule.jsx client/src/icons.jsx
+git commit -m "Add search box to module tables and new icons"
+git pull --rebase origin day3 &amp;&amp; git push origin day3</pre></div>
+
+      <h3>What each line does</h3>
+      <div class="code"><div class="bar"><span class="lg">the same for everyone</span></div><pre>cd serendib-erp                 <span class="c"># go into the project folder</span>
+git fetch origin                <span class="c"># get the latest from GitHub</span>
+git switch day3 || ...          <span class="c"># move onto the shared day3 branch</span>
+git pull --rebase origin day3   <span class="c"># pick up what teammates already pushed</span>
+git checkout origin/day3-source -- &lt;your files&gt;
+                                <span class="c"># copies YOUR finished files in. This is the change.</span>
+git commit -m "..."             <span class="c"># git stamps YOUR name on the commit</span>
+git pull --rebase &amp;&amp; git push    <span class="c"># upload it, on top of anyone before you</span></pre></div>
+      <p style="font-size:13px">Because each person touches <b>different files</b>, two people can never clash. The <span class="mono">pull --rebase</span> before the push just stacks your commit neatly on top of the last one.</p>
+
+      <h3>Step 3 &mdash; after all 7 have pushed (one person does this)</h3>
+      <ul class="clean">
+        <li>Open the repo on GitHub. It shows <b>&ldquo;day3 had recent pushes&rdquo;</b> &rarr; click <b>Compare &amp; pull request</b> (<span class="mono">day3 &rarr; main</span>).</li>
+        <li>Merge it with <b>&ldquo;Create a merge commit&rdquo;</b>. <b>Do NOT pick Squash</b> &mdash; squash would collapse all 7 commits into one and erase everyone's separate credit.</li>
+        <li>That merge triggers <b>one</b> Azure deploy, and the live site updates with everything. Check <b>Insights &rarr; Contributors</b> &mdash; all 7 names should be there.</li>
+      </ul>
+
+      <div class="callout">
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span>
+        <p><b>Reminder:</b> your commit only counts if your git email matches your GitHub account email (Step 1). If a commit shows a grey question-mark avatar on GitHub, that email was wrong &mdash; fix <span class="mono">git config</span> and redo your block.</p>
+      </div>
     </section>
 
     <!-- 07 ADR -->

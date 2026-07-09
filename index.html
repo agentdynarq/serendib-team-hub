@@ -247,6 +247,7 @@
 
     <div class="nlabel">Sections</div>
     <nav id="nav">
+      <a data-tab="progress"><span class="idx">&#9733;</span><span>Progress &amp; Access</span></a>
       <a data-tab="overview"><span class="idx">00</span><span>Overview &amp; Marks</span></a>
       <a data-tab="glossary"><span class="idx">01</span><span>Glossary</span></a>
       <a data-tab="srs"><span class="idx">02</span><span>Requirements (SRS)</span></a>
@@ -280,6 +281,102 @@
     </div>
 
     <div class="inner">
+
+    <!-- PROGRESS & ACCESS -->
+    <section id="progress">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> What you must know</div>
+        <ul>
+          <li>The ERP is <b>already built and LIVE on Azure</b>. All six modules work on the real cloud database.</li>
+          <li>Open the live app, log in, and try it. The <b>login and Azure secrets are shared in our team chat</b>, not on this public page.</li>
+          <li>Your remaining job: <b>clone the repo and make your own commits</b> in your lane. That is a personal mark. See the Git Workflow tab.</li>
+        </ul>
+      </div>
+      <hr class="rule">
+
+      <h3>Live application</h3>
+      <div class="card" style="margin-bottom:14px">
+        <div class="k">Azure deployment URL</div>
+        <p style="margin:6px 0 4px"><a class="mono" href="https://serendib-erp-group5-a2htbtbzgmfqfebc.southeastasia-01.azurewebsites.net" target="_blank" rel="noopener">serendib-erp-group5-a2htbtbzgmfqfebc.southeastasia-01.azurewebsites.net</a></p>
+        <p style="font-size:13px;color:var(--muted);margin:0">The first load after the app is idle takes about 30 seconds (free tier cold start plus the database waking up), then it is fast. Log in with the admin account shared in our team chat.</p>
+      </div>
+
+      <h3>What is done so far</h3>
+      <div class="grid g2">
+        <div class="card">
+          <h5>Day 1 — Foundation <span class="chip">done</span></h5>
+          <ul class="clean" style="margin-top:8px">
+            <li>Login and JWT auth against Azure SQL</li>
+            <li>Inventory module (full add, edit, delete of Lots)</li>
+            <li>Dashboard with live KPIs (stock, low stock, revenue)</li>
+            <li>Deployed to Azure App Service</li>
+            <li>GitHub Actions CI/CD (every push to main auto-deploys)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h5>Day 2 — Full connected flow <span class="chip">done</span></h5>
+          <ul class="clean" style="margin-top:8px">
+            <li>Procurement (Suppliers + Purchases that create Rough Lots)</li>
+            <li>Cutting (jobs that turn Rough into Finished)</li>
+            <li>Sales (Customers + Orders that reserve and sell Lots)</li>
+            <li>Billing (Invoices, Payments, revenue report)</li>
+            <li>HR (Employees, including cutters and sales staff)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>The integration, proven live</h3>
+      <p>One stone was pushed through every module on the real deployed site, and its Lot status changed at each step. An invoice was then raised and fully paid. This is the proof that the modules share one database and are truly connected, which is the main point the marking scheme rewards.</p>
+      <div class="flow">
+        <div class="node"><div class="dot"></div><div class="st">In Stock (rough)</div><div class="by">Procurement buys it</div></div>
+        <div class="node"><div class="dot"></div><div class="st">In Cutting</div><div class="by">Cutting starts the job</div></div>
+        <div class="node"><div class="dot"></div><div class="st">In Stock (finished)</div><div class="by">Cutting completes it</div></div>
+        <div class="node"><div class="dot"></div><div class="st">Reserved</div><div class="by">Sales places an order</div></div>
+        <div class="node"><div class="dot"></div><div class="st">Sold</div><div class="by">Sales confirms, invoice created</div></div>
+      </div>
+
+      <h3>How to demo it (for the presentation)</h3>
+      <ol class="clean">
+        <li>In <b>Procurement</b>, add a Purchase. This creates a new Rough Lot in Inventory.</li>
+        <li>In <b>Cutting</b>, start a job on that rough Lot, then mark it complete. The Lot becomes a Finished stone.</li>
+        <li>In <b>Sales</b>, create a Customer Order for that Lot. It becomes Reserved, then confirm it to mark it Sold. This raises an Invoice.</li>
+        <li>In <b>Billing</b>, record a payment on the Invoice. Watch the revenue report update.</li>
+        <li>Open the <b>Dashboard</b> and Inventory to see every number has changed. That is the integration story in one loop.</li>
+      </ol>
+
+      <h3>How to help (all seven of us)</h3>
+      <ol class="clean">
+        <li>Accept the GitHub invite to the <span class="mono">ERP-Businessman-s</span> organisation.</li>
+        <li>Clone the <span class="mono">serendib-erp</span> repo from the org.</li>
+        <li>Pick your lane from the Implementation Plan tab and make commits under your own name (small, real commits count for the personal mark).</li>
+        <li>Ask in our team chat for the app login and Azure details.</li>
+      </ol>
+
+      <h3>Repository and Azure (non-secret details)</h3>
+      <div class="grid g2">
+        <div class="card">
+          <h5>Repository</h5>
+          <ul class="clean" style="margin-top:8px">
+            <li>Org: <span class="mono">github.com/ERP-Businessman-s</span></li>
+            <li>Project repo: <span class="mono">serendib-erp</span> (public)</li>
+            <li>This hub: <span class="mono">serendib-team-hub</span> (public)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h5>Azure</h5>
+          <ul class="clean" style="margin-top:8px">
+            <li>Subscription: Azure for Students</li>
+            <li>Resource group: <span class="mono">serendib-erp-rg</span></li>
+            <li>Region: Southeast Asia</li>
+            <li>Web app: <span class="mono">serendib-erp-group5</span> (Free F1, Node 22)</li>
+            <li>Database: <span class="mono">serendib_erp</span> (Azure SQL)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7v6c0 5 3.5 8 9 9 5.5-1 9-4 9-9V7Z"/></svg></span>
+        <p><strong>Why the passwords are not on this page.</strong> This hub is a public web page, so anything written here can be seen and cached by anyone on the internet. The database password, the JWT secret and the app login are <b>never put on a public page or in the repo</b>. They are shared only in our private team chat. If a real password ever leaks, we would have to change it everywhere, so please keep them off any public link.</p></div>
+    </section>
 
     <!-- 00 OVERVIEW -->
     <section id="overview">

@@ -258,6 +258,8 @@
       <a data-tab="commit"><span class="idx">&#9733;</span><span>Commit Your Part</span></a>
       <a data-tab="adr"><span class="idx">07</span><span>Stack Decision</span></a>
       <a data-tab="integration"><span class="idx">08</span><span>How It Connects</span></a>
+      <a data-tab="arch"><span class="idx">09</span><span>Architecture</span></a>
+      <a data-tab="present"><span class="idx">&#9733;</span><span>Presentation &amp; Report</span></a>
     </nav>
 
     <div class="aside-foot">
@@ -860,7 +862,7 @@ Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
         <li><strong>Suppliers &amp; Customers</strong> — the two outside parties.</li>
       </ul>
 
-      <h3>The problems today</h3>
+      <h3>The problems today <span style="font-weight:400;color:var(--muted);font-size:14px">(As-Is process)</span></h3>
       <ul class="clean">
         <li>Stock is not clear. The stock book is on paper, so nobody is sure what is really in stock.</li>
         <li>Data is repeated and does not match across the purchase book, stock book, and sales bill.</li>
@@ -870,7 +872,7 @@ Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
         <li>Risk of selling the same stone twice, because there is no single shared record.</li>
       </ul>
 
-      <h3>What the ERP gives</h3>
+      <h3>What the ERP gives <span style="font-weight:400;color:var(--muted);font-size:14px">(To-Be process)</span></h3>
       <ul class="clean">
         <li>One shared record for each stone, so stock is always correct.</li>
         <li>A single status field showing exactly where each stone is in its life.</li>
@@ -881,13 +883,25 @@ Customers --&lt; Orders --&lt; OrderItems &gt;-- Lots
       </ul>
 
       <h3>Process to module map</h3>
-      <div class="table-wrap"><table><thead><tr><th>Business process</th><th>ERP module</th></tr></thead><tbody>
-        <tr><td>Buying rough stones</td><td>Procurement</td></tr>
-        <tr><td>Holding stock</td><td>Inventory</td></tr>
-        <tr><td>Cutting and polishing</td><td>Cutting &amp; Workshop</td></tr>
-        <tr><td>Selling</td><td>Sales</td></tr>
-        <tr><td>Money</td><td>Billing</td></tr>
-        <tr><td>Staff</td><td>HR &amp; Staff</td></tr>
+      <p style="font-size:13px;color:var(--muted);margin-top:0">Each module also lines up with a <b>standard ERP module</b> from Lecture 11, so we can talk about it in ERP terms.</p>
+      <div class="table-wrap"><table><thead><tr><th>Business process</th><th>Our module</th><th>Standard ERP module</th></tr></thead><tbody>
+        <tr><td>Buying rough stones</td><td>Procurement</td><td>Supply Chain Management (SCM)</td></tr>
+        <tr><td>Holding stock</td><td>Inventory</td><td>Supply Chain Management (SCM)</td></tr>
+        <tr><td>Cutting and polishing</td><td>Cutting &amp; Workshop</td><td>SCM &middot; Manufacturing flow</td></tr>
+        <tr><td>Selling</td><td>Sales</td><td>Customer Relationship Management (CRM)</td></tr>
+        <tr><td>Money</td><td>Billing</td><td>Finance (Accounts Receivable)</td></tr>
+        <tr><td>Staff</td><td>HR &amp; Staff</td><td>Human Capital Management (HCM)</td></tr>
+        <tr><td>Reports</td><td>Dashboard</td><td>Business Intelligence (BI)</td></tr>
+      </tbody></table></div>
+
+      <h3>Value-added analysis <span style="font-weight:400;color:var(--muted);font-size:14px">(Lecture 08)</span></h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:0">Looking at the old "buy and stock a stone" steps, some add value and some are pure waste that the ERP removes.</p>
+      <div class="table-wrap"><table><thead><tr><th>Step in the old process</th><th>Value?</th><th>What the ERP does</th></tr></thead><tbody>
+        <tr><td>Choose a supplier and buy the rough stone</td><td><b style="color:var(--ok,#3f7a52)">Value-added</b></td><td>Kept — recorded in Procurement</td></tr>
+        <tr><td>Write the stone into the paper stock book by hand</td><td><b style="color:var(--danger,#a23a3a)">Non-value</b></td><td>Removed — the purchase creates the stock record automatically</td></tr>
+        <tr><td>Copy the same details again onto the sales bill</td><td><b style="color:var(--danger,#a23a3a)">Non-value</b></td><td>Removed — one shared record, no re-typing</td></tr>
+        <tr><td>Search paper books to check if a stone is still free</td><td><b style="color:var(--danger,#a23a3a)">Non-value</b></td><td>Removed — the status field shows it instantly</td></tr>
+        <tr><td>Cut and certify the stone</td><td><b style="color:var(--ok,#3f7a52)">Value-added</b></td><td>Kept — tracked in Cutting &amp; Workshop</td></tr>
       </tbody></table></div>
 
       <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"/></svg></span>
@@ -1125,6 +1139,151 @@ git pull --rebase &amp;&amp; git push    <span class="c"># upload it, on top of 
       <p>So one purchase in Procurement changes what Inventory shows, what Cutting can work on, what Sales can sell, what Billing charges, and what the Dashboard reports. This single chain is what we demonstrate live and draw on the "Interaction Between ERP Modules" slide.</p>
 
       <p style="margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line-soft);padding-top:20px">Serendib Gems ERP · Team sync point · Keep this hub open while you build. Every detail here matches the docs in the repository.</p>
+    </section>
+
+    <!-- 09 ARCHITECTURE -->
+    <section id="arch">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="10" width="18" height="5" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg> What you must know</div>
+        <ul>
+          <li>Our system is a textbook <b>3-tier architecture</b>: Presentation &rarr; Application &rarr; Data.</li>
+          <li>It is a <b>Cloud ERP</b>, deployed on <b>Azure App Service</b> with <b>Azure SQL</b>, all as one app.</li>
+          <li>This matches Lecture 12 directly. Be ready to name the three tiers and say why 3-tier beats 2-tier.</li>
+        </ul>
+      </div>
+      <hr class="rule">
+      <p class="lead">React (Presentation) &rarr; Node/Express (Application) &rarr; Azure SQL (Data), running as one Cloud ERP on Microsoft Azure.</p>
+
+      <div style="max-width:600px;margin:22px 0">
+        <div style="border:1px solid var(--line);border-left:4px solid #2f9e70;border-radius:12px;padding:13px 16px;background:var(--surface);box-shadow:var(--shadow)">
+          <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#2f9e70;font-weight:700">Presentation Tier</div>
+          <div style="font-family:var(--serif);font-size:18px;margin:2px 0">React admin app + customer storefront</div>
+          <div style="font-size:12.5px;color:var(--muted)">HTML · CSS · JavaScript · runs in the browser, only shows information</div>
+        </div>
+        <div style="text-align:center;color:var(--muted);font-size:20px;padding:3px 0">&darr;<span style="font-size:11px;display:block;margin-top:-4px">HTTP requests to /api</span></div>
+        <div style="border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:12px;padding:13px 16px;background:var(--surface);box-shadow:var(--shadow)">
+          <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--navy-2);font-weight:700">Application Tier</div>
+          <div style="font-family:var(--serif);font-size:18px;margin:2px 0">Node.js / Express REST API</div>
+          <div style="font-size:12.5px;color:var(--muted)">The heart — business logic, checks rules, adds / updates / deletes data</div>
+        </div>
+        <div style="text-align:center;color:var(--muted);font-size:20px;padding:3px 0">&darr;<span style="font-size:11px;display:block;margin-top:-4px">SQL queries</span></div>
+        <div style="border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:13px 16px;background:var(--surface);box-shadow:var(--shadow)">
+          <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a6d24;font-weight:700">Data Tier</div>
+          <div style="font-family:var(--serif);font-size:18px;margin:2px 0">Azure SQL Database</div>
+          <div style="font-size:12.5px;color:var(--muted)">11 related tables · one shared record per stone · the single source of truth</div>
+        </div>
+      </div>
+
+      <h3>The three tiers</h3>
+      <div class="table-wrap"><table><thead><tr><th>Tier</th><th>In our system</th><th>Technology</th></tr></thead><tbody>
+        <tr><td>Presentation</td><td>Admin app and customer storefront (what the user sees)</td><td>React, HTML, CSS, JavaScript</td></tr>
+        <tr><td>Application</td><td>The business logic and REST API under <span class="mono">/api</span></td><td>Node.js, Express</td></tr>
+        <tr><td>Data</td><td>All records in one shared relational database</td><td>Azure SQL Database (11 tables)</td></tr>
+      </tbody></table></div>
+
+      <h3>Why 3-tier, not 2-tier</h3>
+      <ul class="clean">
+        <li>The business logic lives in its own middle tier, not inside the screen or the database.</li>
+        <li>That gives better <b>scalability, security and maintainability</b> — each tier can change on its own.</li>
+        <li>2-tier (logic in the client or the DB) is simpler but only suits small apps. 3-tier is the enterprise choice.</li>
+      </ul>
+
+      <h3>Cloud, not on-premise</h3>
+      <p>We deploy to Microsoft Azure, so it is a <b>Cloud ERP</b>: no hardware to buy, reachable from anywhere, and it updates automatically on every push to <span class="mono">main</span>. On-premise would mean running our own servers; hybrid would split the two. For a student prototype and the Azure marks, cloud is the right fit.</p>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+        <p><strong>One-app design.</strong> The Express server serves the React build <em>and</em> the <span class="mono">/api</span> endpoints, so the whole 3-tier system runs as a single Azure App Service — one deploy, no CORS, fewer things to break.</p></div>
+    </section>
+
+    <!-- 10 PRESENTATION & REPORT -->
+    <section id="present">
+      <div class="keybox">
+        <div class="kh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> What you must know</div>
+        <ul>
+          <li>Two things are handed in: a <b>3-page report</b> and a <b>10-slide presentation with a live demo</b>. Due <b>13 July 2026</b>.</li>
+          <li>The <b>team decides who does what</b> below. But <b>everyone</b> must still be able to explain their own module in the viva.</li>
+          <li>The lecturer asks about the <b>business process</b>, not the code. Tell the story of a stone moving through the system.</li>
+        </ul>
+      </div>
+      <hr class="rule">
+      <p class="lead">Everything the system needs is already built and live on Azure. What is left is telling the story well: a short report, a clean 10-slide deck, and a smooth live demo. This tab explains who does what and exactly what goes where.</p>
+
+      <h3>The two deliverables</h3>
+      <div class="table-wrap"><table><thead><tr><th>Deliverable</th><th>Format</th><th>Covers (marks)</th></tr></thead><tbody>
+        <tr><td><b>Report</b></td><td>Max <b>3 pages</b>, PDF</td><td>Business process analysis (1) + solution design + tech &amp; deployment</td></tr>
+        <tr><td><b>Presentation</b></td><td><b>10 slides</b> + live demo, ~10 min</td><td>Demo, module integration, database, Azure, GitHub (2 for presentation)</td></tr>
+      </tbody></table></div>
+
+      <h3>Roles &mdash; decide names as a team</h3>
+      <p style="font-size:13px">A good split is <b>2 to 3 people present</b> and the rest write the report and build the deck. Write your names in the group. Nobody sits out: if you write, you still demo your own module; if you present, you still helped write.</p>
+      <div class="table-wrap"><table><thead><tr><th>Role</th><th>What they do</th><th>Owner (decide)</th></tr></thead><tbody>
+        <tr><td>Speaker 1</td><td>Opens: the business, the problem, our ERP idea and the modules.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+        <tr><td>Speaker 2 (demo driver)</td><td>Runs the live demo, clicks through the flow, narrates each step.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+        <tr><td>Report lead</td><td>Writes and formats the 3-page report, keeps it to 3 pages.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+        <tr><td>Report support</td><td>Screenshots, the database and process diagrams, references.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+        <tr><td>Slide designer</td><td>Builds the 10 slides, keeps them clean and consistent.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+        <tr><td>Q&amp;A + timekeeper</td><td>Watches the time, handles questions, backup screenshots ready.</td><td>&#95;&#95;&#95;&#95;&#95;&#95;</td></tr>
+      </tbody></table></div>
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+        <p><b>Every member must know their own module.</b> The lecturer can ask any one of you to explain your part. Open your module, click through it once, and be ready to say what it does and how it connects to the others.</p></div>
+
+      <h3>Part A &mdash; The Report (max 3 pages)</h3>
+      <p>Three sections, roughly one page each. Do not restate the question, just answer it. Add 2 or 3 screenshots so it does not read like an essay.</p>
+      <div class="card" style="margin:12px 0 6px"><span class="lane">PAGE 1</span><h5>Business Process Analysis</h5><p>The old manual way (paper ledgers, phone orders, no live stock) vs the new ERP way. Walk the two core processes: <b>Procure-to-Pay</b> (buy rough &rarr; stock &rarr; pay) and <b>Order-to-Cash</b> (order &rarr; deliver &rarr; invoice). Pull the As-Is / To-Be and value-added points from the <b>Process Analysis</b> tab.</p></div>
+      <div class="card" style="margin:14px 0 6px"><span class="lane">PAGE 2</span><h5>ERP Solution Design</h5><p>The 6 modules and how each maps to a standard ERP area (Inventory / Procurement / Cutting = SCM, Sales = CRM, Billing = Finance, HR = HCM, Dashboard / Reports = BI). Then the key point: they are integrated through <b>one shared record</b>, the gem lot status. Use the <b>How It Connects</b> tab.</p></div>
+      <div class="card" style="margin:14px 0 6px"><span class="lane">PAGE 3</span><h5>Technology &amp; Deployment</h5><p>The <b>3-tier architecture</b> (React &rarr; Node/Express &rarr; Azure SQL), why cloud, and the <b>Azure App Service</b> deployment with auto-deploy on every push to <span class="mono">main</span>. End with GitHub: one repo, all 7 members with their own commits. Use the <b>Architecture</b> and <b>Git Workflow</b> tabs.</p></div>
+      <ul class="clean">
+        <li>Keep it to <b>3 pages</b>. Headings, screenshots and captions do not eat much space, but do not over-write.</li>
+        <li>Put the <b>team member names and student IDs</b> at the top.</li>
+        <li>Export to PDF and check the page count before uploading.</li>
+      </ul>
+
+      <h3>Part B &mdash; The 10 slides</h3>
+      <p style="font-size:13px">This order matches what the brief asks to show. One idea per slide, few words, let the demo do the talking.</p>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Slide</th><th>What is on it</th></tr></thead><tbody>
+        <tr><td>1</td><td>Title</td><td>Serendib Gems ERP, the module name, all 7 member names and IDs.</td></tr>
+        <tr><td>2</td><td>The business &amp; problem</td><td>What a gem house does, and the pain of running it on paper (no live stock, slow orders).</td></tr>
+        <tr><td>3</td><td>Our ERP solution</td><td>The 6 modules + dashboard, one screenshot of the app. Map each to SCM / CRM / Finance / HCM / BI.</td></tr>
+        <tr><td>4</td><td>Business process workflow</td><td>Procure-to-Pay and Order-to-Cash as two simple arrows.</td></tr>
+        <tr><td>5</td><td>How the modules interact</td><td>The shared lot status chain: rough &rarr; cutting &rarr; finished &rarr; reserved &rarr; sold. This is the integration mark.</td></tr>
+        <tr><td>6</td><td>Live demo: login + dashboard</td><td>Switch to the live site. Log in, show the KPIs and charts.</td></tr>
+        <tr><td>7</td><td>Live demo: the flow</td><td>Buy &rarr; cut &rarr; a storefront order &rarr; sell &rarr; invoice paid. Watch the numbers change.</td></tr>
+        <tr><td>8</td><td>Database design</td><td>The tables and how they relate. One shared record per stone. Use the Database Design tab.</td></tr>
+        <tr><td>9</td><td>Azure cloud deployment</td><td>3-tier on Azure App Service + Azure SQL, auto-deploy on push. Show the live URL.</td></tr>
+        <tr><td>10</td><td>GitHub &amp; team + close</td><td>The repo, Insights &rarr; Contributors with all 7 names, and a one-line conclusion.</td></tr>
+      </tbody></table></div>
+
+      <h3>Part C &mdash; The live demo script</h3>
+      <p style="font-size:13px">This is the golden thread. Follow it in order and narrate the <b>process</b> at each step (say the module and the ERP area out loud).</p>
+      <div class="code"><div class="bar"><span class="lg">demo walk &mdash; one stone, start to finish</span></div><pre>1. Log in as admin            <span class="c"># show the dashboard: stock, revenue, charts</span>
+2. Procurement &rarr; add purchase   <span class="c"># SCM. a rough lot is created -> "In Stock (rough)"</span>
+3. Cutting &rarr; run cutting job    <span class="c"># SCM. status -> "In Cutting" -> "In Stock (finished)"</span>
+4. Storefront /shop &rarr; order    <span class="c"># CRM. a customer order appears in Sales</span>
+5. Sales &rarr; confirm the order    <span class="c"># lot -> "Reserved" -> "Sold"</span>
+6. Billing &rarr; invoice + mark paid <span class="c"># Finance. revenue updates on the dashboard</span>
+7. Process Flow + Reports pages  <span class="c"># BI/BPM. show the whole flow and a printed report</span></pre></div>
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
+        <p><b>Open the live site a minute before you present.</b> The free Azure tier sleeps when idle, so the first load can take ~30 seconds. Wake it up early so it is fast during the demo, and keep <b>backup screenshots</b> in the deck in case the wifi drops.</p></div>
+
+      <h3>Presentation-day tips</h3>
+      <ul class="clean">
+        <li>Aim for about <b>10 minutes</b>. Slides 1 to 5 are quick; spend the time on the <b>live demo</b> (slides 6 and 7).</li>
+        <li>Speak to the <b>process</b>, not the code. Say "when we buy a stone the system does X", not "this function calls the API".</li>
+        <li>Hand over smoothly: agree who says what before you walk in.</li>
+        <li>Each person should be able to answer a question about <b>their own module</b>.</li>
+      </ul>
+
+      <h3>Questions she may ask (be ready)</h3>
+      <div class="table-wrap"><table><thead><tr><th>Question</th><th>Where the answer is</th></tr></thead><tbody>
+        <tr><td>Which ERP modules did you build?</td><td>Overview &amp; the 6 modules, mapped to SCM / CRM / Finance / HCM / BI.</td></tr>
+        <tr><td>How are the modules integrated?</td><td>The shared lot status &mdash; see the <b>How It Connects</b> tab.</td></tr>
+        <tr><td>What business processes does it support?</td><td>Procure-to-Pay and Order-to-Cash &mdash; <b>Process Analysis</b> tab.</td></tr>
+        <tr><td>Why cloud / why 3-tier?</td><td>Scalability, security, maintainability &mdash; <b>Architecture</b> tab.</td></tr>
+        <tr><td>How did the team contribute?</td><td>One repo, each member has their own commits &mdash; <b>Git Workflow</b> tab, Insights &rarr; Contributors.</td></tr>
+      </tbody></table></div>
+
+      <div class="callout"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <p><b>Final checklist:</b> report is 3 pages with names + IDs &middot; 10 slides done &middot; live site opens and the demo flow works end to end &middot; backup screenshots in the deck &middot; everyone can explain their module &middot; uploaded before <b>13 July 2026</b>.</p></div>
     </section>
 
     </div>
